@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaJugada - Apuestas Deportivas</title>
+    <!-- Tailwind CSS para diseño moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#131b2e',
+                        accentGreen: '#10b981',
+                        accentGold: '#f59e0b',
+                        darkBorder: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-cardBg border-b border-darkBorder sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('cartelera')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accentGreen to-emerald-400 flex items-center justify-center shadow-md shadow-accentGreen/20">
+                    <i class="fa-solid fa-trophy text-darkBg text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-wider text-white uppercase italic">Nova<span class="text-accentGreen">Jugada</span></h1>
+                    <p class="text-[10px] text-gray-400 font-medium tracking-widest uppercase">Centro de Apuestas Pro</p>
+                </div>
+            </div>
+
+            <!-- Navegación por Deportes -->
+            <nav class="hidden md:flex items-center space-x-1 bg-darkBg/60 p-1.5 rounded-xl border border-darkBorder">
+                <button onclick="setSport('futbol')" id="nav-futbol" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-accentGreen text-darkBg shadow"><i class="fa-solid fa-futbol mr-1.5"></i> Fútbol</button>
+                <button onclick="setSport('beisbol')" id="nav-beisbol" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-baseball mr-1.5"></i> Béisbol</button>
+                <button onclick="setSport('baloncesto')" id="nav-baloncesto" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-basketball mr-1.5"></i> Baloncesto</button>
+                <button onclick="setSport('tenis')" id="nav-tenis" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-table-tennis-paddle-ball mr-1.5"></i> Tenis</button>
+                <button onclick="setSport('en vivo')" id="nav-en vivo" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-red-400 hover:text-red-300 animate-pulse"><i class="fa-solid fa-tower-broadcast mr-1.5"></i> En Vivo</button>
+            </nav>
+
+            <!-- Acciones de Usuario / Saldo -->
+            <div class="flex items-center space-x-3">
+                <div id="user-info-area" class="flex items-center bg-darkBg/80 border border-darkBorder px-3 py-1.5 rounded-xl">
+                    <div class="mr-3 text-right">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold" id="username-display">Invitado</p>
+                        <p class="text-sm font-extrabold text-accentGreen" id="user-balance-display">$0.00</p>
+                    </div>
+                    <button onclick="openDepositModal()" class="bg-accentGreen hover:bg-emerald-600 text-darkBg font-black text-xs px-2.5 py-1.5 rounded-lg shadow transition-all flex items-center"><i class="fa-solid fa-plus mr-1"></i> Recargar</button>
+                </div>
+
+                <button onclick="switchTab('admin')" class="bg-darkBorder hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center border border-gray-700"><i class="fa-solid fa-shield-halved mr-1 text-accentGold"></i> Admin</button>
+                <button onclick="logoutUser()" id="logout-btn" class="hidden text-red-400 hover:text-red-300 text-xs px-2"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </div>
+        
+        <!-- Navegación móvil de deportes -->
+        <div class="flex md:hidden overflow-x-auto space-x-2 px-4 pb-3 pt-1 border-t border-darkBorder/40">
+            <button onclick="setSport('futbol')" id="mob-nav-futbol" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold bg-accentGreen text-darkBg"><i class="fa-solid fa-futbol mr-1"></i> Fútbol</button>
+            <button onclick="setSport('beisbol')" id="mob-nav-beisbol" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-baseball mr-1"></i> Béisbol</button>
+            <button onclick="setSport('baloncesto')" id="mob-nav-baloncesto" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-basketball mr-1"></i> Baloncesto</button>
+            <button onclick="setSport('tenis')" id="mob-nav-tenis" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-table-tennis-paddle-ball mr-1"></i> Tenis</button>
+            <button onclick="setSport('en vivo')" id="mob-nav-en vivo" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-red-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-tower-broadcast mr-1"></i> En Vivo</button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Columna Izquierda / Central: Partidos y Admin -->
+        <section id="main-content-area" class="lg:col-span-8 space-y-6">
+            
+            <!-- Vista Cartelera -->
+            <div id="view-cartelera" class="space-y-6">
+                <!-- Banner de Bienvenida / Promoción -->
+                <div class="bg-gradient-to-r from-emerald-900/40 via-cardBg to-darkBg border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden shadow-xl">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-accentGreen"><i class="fa-solid fa-futbol"></i></div>
+                    <span class="bg-accentGreen/20 text-accentGreen text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">¡Apuesta y Gana!</span>
+                    <h2 class="text-2xl font-black text-white mt-2">Arma tu Parlay con las Mejores Cuotas</h2>
+                    <p class="text-sm text-gray-300 mt-1 max-w-xl">Selecciona tus pronósticos favoritos en Fútbol, Béisbol, Baloncesto o Tenis, combina logros y multiplica tus ganancias al instante.</p>
+                </div>
+
+                <!-- Filtros y Buscador -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-cardBg p-4 rounded-2xl border border-darkBorder">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+                        <input type="text" id="match-search" oninput="filterMatches()" placeholder="Buscar equipo o torneo..." class="w-full bg-darkBg border border-darkBorder rounded-xl pl-10 pr-4 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                        <span class="text-xs text-gray-400 font-medium">Liga / Torneo:</span>
+                        <select id="league-filter" onchange="filterMatches()" class="bg-darkBg border border-darkBorder rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+                            <option value="all">Todas las Ligas</option>
+                        </select>
+                        <button onclick="openCreateMatchModal()" class="bg-darkBorder hover:bg-gray-700 text-accentGold text-xs px-3 py-2 rounded-xl font-bold border border-darkBorder flex items-center"><i class="fa-solid fa-plus mr-1"></i> Partido</button>
+                    </div>
+                </div>
+
+                <!-- Listado de Partidos -->
+                <div id="matches-container" class="space-y-3">
+                    <!-- Los partidos se cargan dinámicamente aquí -->
+                </div>
+            </div>
+
+            <!-- Vista Panel de Administrador -->
+            <div id="view-admin" class="hidden space-y-6">
+                <div class="bg-cardBg p-6 rounded-2xl border border-darkBorder flex justify-between items-center">
+                    <div>
+                        <span class="bg-accentGold/20 text-accentGold text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Modo Propietario</span>
+                        <h2 class="text-2xl font-black text-white mt-1">Panel de Control & Tesorería</h2>
+                        <p class="text-xs text-gray-400">Gestiona recargas, retiros y la configuración financiera de NovaJugada.</p>
+                    
