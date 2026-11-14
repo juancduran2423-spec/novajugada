@@ -218,7 +218,7 @@
             if(m) {
                 m.dangerousAttack = !m.dangerousAttack;
                 if(m.dangerousAttack && m.activeBet) {
-                    m.activeBet.cashOutValue = Math.max(1.00, m.activeBet.cashOutValue * 0.4); // Desvalorización por riesgo
+                    m.activeBet.cashOutValue = Math.max(1.00, m.activeBet.cashOutValue * 0.4); 
                 }
                 renderMatches();
             }
@@ -234,7 +234,6 @@
                     m.activeBet.cashOutValue *= (addA > 0 ? 1.3 : 0.5); 
                 }
 
-                // Pago Anticipado automático a los 2 goles de diferencia
                 if(Math.abs(m.goalsA - m.goalsB) >= 2) {
                     alert(`🚨 ¡PAGO ANTICIPADO ACTIVADO! El equipo con ventaja de 2+ goles gana automáticamente.`);
                     m.status = "Finalizado (Pago Anticipado)";
@@ -253,7 +252,7 @@
             }
         }
 
-        // Llave secreta del Admin (?admin=juan2026)
+        // Llave secreta del Admin (?admin=juan2026)[span_2](start_span)[span_2](end_span)
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('admin') === 'juan2026' || localStorage.getItem('nova_owner') === 'true') {
             localStorage.setItem('nova_owner', 'true');
