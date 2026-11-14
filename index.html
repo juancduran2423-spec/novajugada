@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaJugada - Apuestas Deportivas</title>
-    <!-- Tailwind CSS para diseño moderno -->
+    <title>NovaJugada - Apuestas Deportivas en Vivo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -23,852 +22,250 @@
         }
     </script>
 </head>
-<body class="bg-darkBg text-gray-100 font-sans min-h-screen flex flex-col">
+<body class="bg-darkBg text-gray-100 font-sans min-h-screen pb-16">
 
     <!-- Header / Navbar -->
     <header class="bg-cardBg border-b border-darkBorder sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
-            <!-- Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('cartelera')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accentGreen to-emerald-400 flex items-center justify-center shadow-md shadow-accentGreen/20">
-                    <i class="fa-solid fa-trophy text-darkBg text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-black tracking-wider text-white uppercase italic">Nova<span class="text-accentGreen">Jugada</span></h1>
-                    <p class="text-[10px] text-gray-400 font-medium tracking-widest uppercase">Centro de Apuestas Pro</p>
-                </div>
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-bolt text-accentGold text-xl animate-pulse"></i>
+                <span class="text-xl font-bold tracking-wider text-white">Nova<span class="text-accentGold">Jugada</span></span>
             </div>
-
-            <!-- Navegación por Deportes -->
-            <nav class="hidden md:flex items-center space-x-1 bg-darkBg/60 p-1.5 rounded-xl border border-darkBorder">
-                <button onclick="setSport('futbol')" id="nav-futbol" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-accentGreen text-darkBg shadow"><i class="fa-solid fa-futbol mr-1.5"></i> Fútbol</button>
-                <button onclick="setSport('beisbol')" id="nav-beisbol" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-baseball mr-1.5"></i> Béisbol</button>
-                <button onclick="setSport('baloncesto')" id="nav-baloncesto" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-basketball mr-1.5"></i> Baloncesto</button>
-                <button onclick="setSport('tenis')" id="nav-tenis" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white"><i class="fa-solid fa-table-tennis-paddle-ball mr-1.5"></i> Tenis</button>
-                <button onclick="setSport('en vivo')" id="nav-en vivo" class="sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-red-400 hover:text-red-300 animate-pulse"><i class="fa-solid fa-tower-broadcast mr-1.5"></i> En Vivo</button>
-            </nav>
-
-            <!-- Acciones de Usuario / Saldo -->
-            <div class="flex items-center space-x-3">
-                <div id="user-info-area" class="flex items-center bg-darkBg/80 border border-darkBorder px-3 py-1.5 rounded-xl">
-                    <div class="mr-3 text-right">
-                        <p class="text-[10px] text-gray-400 uppercase font-bold" id="username-display">Invitado</p>
-                        <p class="text-sm font-extrabold text-accentGreen" id="user-balance-display">$0.00</p>
-                    </div>
-                    <button onclick="openDepositModal()" class="bg-accentGreen hover:bg-emerald-600 text-darkBg font-black text-xs px-2.5 py-1.5 rounded-lg shadow transition-all flex items-center"><i class="fa-solid fa-plus mr-1"></i> Recargar</button>
-                </div>
-
-                <button onclick="switchTab('admin')" class="bg-darkBorder hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center border border-gray-700"><i class="fa-solid fa-shield-halved mr-1 text-accentGold"></i> Admin</button>
-                <button onclick="logoutUser()" id="logout-btn" class="hidden text-red-400 hover:text-red-300 text-xs px-2"><i class="fa-solid fa-right-from-bracket"></i></button>
+            <div class="flex items-center gap-3">
+                <!-- Botón de Admin Oculto por defecto (Protegido con llave secreta) -->
+                <button id="btnAdmin" onclick="toggleAdminPanel()" class="hidden bg-accentGold/20 text-accentGold border border-accentGold/30 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 hover:bg-accentGold/30 transition">
+                    <i class="fas fa-crown"></i> Admin
+                </button>
             </div>
-        </div>
-        
-        <!-- Navegación móvil de deportes -->
-        <div class="flex md:hidden overflow-x-auto space-x-2 px-4 pb-3 pt-1 border-t border-darkBorder/40">
-            <button onclick="setSport('futbol')" id="mob-nav-futbol" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold bg-accentGreen text-darkBg"><i class="fa-solid fa-futbol mr-1"></i> Fútbol</button>
-            <button onclick="setSport('beisbol')" id="mob-nav-beisbol" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-baseball mr-1"></i> Béisbol</button>
-            <button onclick="setSport('baloncesto')" id="mob-nav-baloncesto" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-basketball mr-1"></i> Baloncesto</button>
-            <button onclick="setSport('tenis')" id="mob-nav-tenis" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-table-tennis-paddle-ball mr-1"></i> Tenis</button>
-            <button onclick="setSport('en vivo')" id="mob-nav-en vivo" class="sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-red-400 bg-darkBg border border-darkBorder"><i class="fa-solid fa-tower-broadcast mr-1"></i> En Vivo</button>
         </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Columna Izquierda / Central: Partidos y Admin -->
-        <section id="main-content-area" class="lg:col-span-8 space-y-6">
-            
-            <!-- Vista Cartelera -->
-            <div id="view-cartelera" class="space-y-6">
-                <!-- Banner de Bienvenida / Promoción -->
-                <div class="bg-gradient-to-r from-emerald-900/40 via-cardBg to-darkBg border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-accentGreen"><i class="fa-solid fa-futbol"></i></div>
-                    <span class="bg-accentGreen/20 text-accentGreen text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">¡Apuesta y Gana!</span>
-                    <h2 class="text-2xl font-black text-white mt-2">Arma tu Parlay con las Mejores Cuotas</h2>
-                    <p class="text-sm text-gray-300 mt-1 max-w-xl">Selecciona tus pronósticos favoritos en Fútbol, Béisbol, Baloncesto o Tenis, combina logros y multiplica tus ganancias al instante.</p>
-                </div>
-
-                <!-- Filtros y Buscador -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-cardBg p-4 rounded-2xl border border-darkBorder">
-                    <div class="relative w-full sm:w-72">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
-                        <input type="text" id="match-search" oninput="filterMatches()" placeholder="Buscar equipo o torneo..." class="w-full bg-darkBg border border-darkBorder rounded-xl pl-10 pr-4 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
-                    </div>
-                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                        <span class="text-xs text-gray-400 font-medium">Liga / Torneo:</span>
-                        <select id="league-filter" onchange="filterMatches()" class="bg-darkBg border border-darkBorder rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
-                            <option value="all">Todas las Ligas</option>
-                        </select>
-                        <button onclick="openCreateMatchModal()" class="bg-darkBorder hover:bg-gray-700 text-accentGold text-xs px-3 py-2 rounded-xl font-bold border border-darkBorder flex items-center"><i class="fa-solid fa-plus mr-1"></i> Partido</button>
-                    </div>
-                </div>
-
-                <!-- Listado de Partidos -->
-                <div id="matches-container" class="space-y-3">
-                    <!-- Los partidos se cargan dinámicamente aquí -->
-                </div>
+    <!-- Main Content / Cartelera en Vivo -->
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <!-- Banner promocional -->
+        <div class="bg-gradient-to-r from-blue-900/40 to-emerald-900/40 border border-darkBorder p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white">Cartelera en Vivo y Cash Out</h1>
+                <p class="text-gray-400 text-sm">Apuestas en tiempo real, pago anticipado de 2 goles y bloqueo por jugadas peligrosas.</p>
             </div>
-
-            <!-- Vista Panel de Administrador -->
-            <div id="view-admin" class="hidden space-y-6">
-                <div class="bg-cardBg p-6 rounded-2xl border border-darkBorder flex justify-between items-center">
-                    <div>
-                        <span class="bg-accentGold/20 text-accentGold text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Modo Propietario</span>
-                        <h2 class="text-2xl font-black text-white mt-1">Panel de Control & Tesorería</h2>
-                        <p class="text-xs text-gray-400">Gestiona recargas, retiros y la configuración financiera de NovaJugada.</p>
-                    </div>
-                    <button onclick="switchTab('cartelera')" class="bg-accentGreen text-darkBg font-bold text-xs px-4 py-2 rounded-xl shadow"><i class="fa-solid fa-arrow-left mr-1"></i> Volver al Juego</button>
-                </div>
-
-                <!-- Tarjetas de Resumen Financiero -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-cardBg p-4 rounded-2xl border border-darkBorder">
-                        <p class="text-xs text-gray-400 font-semibold uppercase">Total Jugado en Tickets</p>
-                        <h3 class="text-2xl font-black text-white mt-1" id="admin-total-staked">$0.00</h3>
-                    </div>
-                    <div class="bg-cardBg p-4 rounded-2xl border border-darkBorder">
-                        <p class="text-xs text-gray-400 font-semibold uppercase">Recargas Pendientes</p>
-                        <h3 class="text-2xl font-black text-accentGold mt-1" id="admin-pending-deposits">0</h3>
-                    </div>
-                    <div class="bg-cardBg p-4 rounded-2xl border border-darkBorder">
-                        <p class="text-xs text-gray-400 font-semibold uppercase">Retiros Pendientes</p>
-                        <h3 class="text-2xl font-black text-red-400 mt-1" id="admin-pending-withdrawals">0</h3>
-                    </div>
-                </div>
-
-                <!-- Pestañas internas del Admin -->
-                <div class="flex space-x-2 border-b border-darkBorder pb-2">
-                    <button onclick="switchAdminTab('deposits')" id="adm-tab-deposits" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-bold bg-accentGreen text-darkBg">Solicitudes de Recarga</button>
-                    <button onclick="switchAdminTab('withdrawals')" id="adm-tab-withdrawals" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 bg-cardBg border border-darkBorder">Solicitudes de Retiro</button>
-                    <button onclick="switchAdminTab('settings')" id="adm-tab-settings" class="admin-sub-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 bg-cardBg border border-darkBorder">Datos de Pago y Tasa</button>
-                </div>
-
-                <!-- Contenido Recargas -->
-                <div id="admin-content-deposits" class="space-y-3">
-                    <h3 class="text-sm font-bold text-gray-300">Aprobar o Rechazar Recargas de Clientes</h3>
-                    <div id="admin-deposits-list" class="space-y-2">
-                        <!-- Renderdinámico -->
-                    </div>
-                </div>
-
-                <!-- Contenido Retiros -->
-                <div id="admin-content-withdrawals" class="hidden space-y-3">
-                    <h3 class="text-sm font-bold text-gray-300">Solicitudes de Retiro de Premios</h3>
-                    <div id="admin-withdrawals-list" class="space-y-2">
-                        <!-- Renderdinámico -->
-                    </div>
-                </div>
-
-                <!-- Contenido Configuración -->
-                <div id="admin-content-settings" class="hidden space-y-4 bg-cardBg p-6 rounded-2xl border border-darkBorder">
-                    <h3 class="text-base font-bold text-white border-b border-darkBorder pb-3">Configuración de Pagos y Tasa Cambiaria</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Banco para Pago Móvil</label>
-                            <input type="text" id="cfg-bank" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: Banco Mercantil (0105)">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Teléfono Pago Móvil</label>
-                            <input type="text" id="cfg-phone" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: 04121234567">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cédula o RIF</label>
-                            <input type="text" id="cfg-id" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: V-12345678">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tasa del Dólar (Bs. por $1)</label>
-                            <input type="number" step="0.01" id="cfg-rate" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: 36.50">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Binance Pay (Email / ID)</label>
-                            <input type="text" id="cfg-binance" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="tucorreo@binance.com">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Zelle (Correo)</label>
-                            <input type="text" id="cfg-zelle" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="tucorreo@zelle.com">
-                        </div>
-                    </div>
-                    <div class="pt-2">
-                        <button onclick="saveAdminSettings()" class="bg-accentGreen hover:bg-emerald-600 text-darkBg font-black text-xs px-6 py-3 rounded-xl shadow transition-all">Guardar Configuración</button>
-                    </div>
-                </div>
-
+            <div class="flex gap-2 text-xs flex-wrap">
+                <span class="bg-accentGold/10 text-accentGold border border-accentGold/30 px-2.5 py-1 rounded-full"><i class="fas fa-shield-alt"></i> Pago 2 Goles</span>
+                <span class="bg-red-500/15 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full">🔴 Cash Out Dinámico con Bloqueo de Riesgo</span>
             </div>
+        </div>
 
-        </section>
-
-        <!-- Columna Derecha: Boleto / Parlay Slip -->
-        <section class="lg:col-span-4 space-y-6">
-            <div class="bg-cardBg border border-darkBorder rounded-2xl p-5 sticky top-20 shadow-xl">
-                <div class="flex justify-between items-center border-b border-darkBorder pb-3 mb-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-receipt text-accentGreen"></i>
-                        <h3 class="font-black text-sm uppercase tracking-wider text-white">Boleto / Parlay</h3>
-                    </div>
-                    <span id="slip-count-badge" class="bg-accentGreen text-darkBg text-[10px] font-black px-2 py-0.5 rounded-full">0</span>
-                </div>
-
-                <!-- Contenedor de Selecciones -->
-                <div id="slip-items" class="space-y-3 max-h-72 overflow-y-auto pr-1">
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fa-solid fa-ticket text-3xl mb-2 opacity-30"></i>
-                        <p class="text-xs">Haz clic en cualquier cuota de los partidos para armar tu jugada.</p>
-                    </div>
-                </div>
-
-                <!-- Resumen de Cuota y Apuesta -->
-                <div id="slip-summary" class="hidden mt-4 pt-4 border-t border-darkBorder space-y-3">
-                    <div class="flex justify-between text-xs text-gray-300">
-                        <span>Cuota Total:</span>
-                        <span id="slip-total-odds" class="font-black text-accentGold text-sm">1.00</span>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Monto a Apostar ($):</span>
-                            <span id="max-stake-label">Saldo: $0.00</span>
-                        </div>
-                        <input type="number" id="stake-input" oninput="calculatePayout()" class="w-full bg-darkBg border border-darkBorder rounded-xl px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-accentGreen" placeholder="10.00" value="10">
-                    </div>
-
-                    <!-- Botones rápidos de monto -->
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <button onclick="setStake(5)" class="bg-darkBg hover:bg-darkBorder border border-darkBorder text-xs py-1 rounded-lg font-bold text-gray-300">$5</button>
-                        <button onclick="setStake(10)" class="bg-darkBg hover:bg-darkBorder border border-darkBorder text-xs py-1 rounded-lg font-bold text-gray-300">$10</button>
-                        <button onclick="setStake(25)" class="bg-darkBg hover:bg-darkBorder border border-darkBorder text-xs py-1 rounded-lg font-bold text-gray-300">$25</button>
-                        <button onclick="setStake(50)" class="bg-darkBg hover:bg-darkBorder border border-darkBorder text-xs py-1 rounded-lg font-bold text-gray-300">$50</button>
-                    </div>
-
-                    <div class="bg-darkBg/60 p-3 rounded-xl border border-darkBorder flex justify-between items-center">
-                        <span class="text-xs text-gray-400 font-medium">Ganancia Potencial:</span>
-                        <span id="potential-payout" class="text-base font-black text-accentGreen">$0.00</span>
-                    </div>
-
-                    <button onclick="placeBet()" class="w-full bg-gradient-to-r from-accentGreen to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-darkBg font-black text-xs py-3 rounded-xl shadow-lg shadow-accentGreen/20 transition-all uppercase tracking-wider">Apostar Ahora</button>
-                </div>
-            </div>
-
-            <!-- Historial de Tickets del Usuario -->
-            <div class="bg-cardBg border border-darkBorder rounded-2xl p-5 shadow-xl">
-                <h3 class="font-black text-sm uppercase tracking-wider text-white mb-3 flex items-center">
-                    <i class="fa-solid fa-clock-rotate-left mr-2 text-accentGold"></i> Mis Tickets Activos
-                </h3>
-                <div id="user-bets-list" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                    <p class="text-xs text-gray-500 text-center py-4">No tienes jugadas activas recientes.</p>
-                </div>
-                <div class="mt-4 pt-3 border-t border-darkBorder flex justify-between">
-                    <button onclick="openWithdrawModal()" class="w-full bg-darkBorder hover:bg-gray-700 text-accentGold font-bold text-xs py-2 rounded-xl border border-darkBorder transition-all flex items-center justify-center"><i class="fa-solid fa-money-bill-transfer mr-1.5"></i> Solicitar Retiro</button>
-                </div>
-            </div>
-        </section>
-
+        <!-- Contenedor de Partidos en Vivo -->
+        <div id="matchContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Los partidos se cargan dinámicamente -->
+        </div>
     </main>
 
-    <!-- Modal Recarga -->
-    <div id="deposit-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cardBg border border-darkBorder rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
-            <button onclick="closeDepositModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-black text-white flex items-center"><i class="fa-solid fa-circle-plus text-accentGreen mr-2"></i> Recargar Saldo</h3>
-            <p class="text-xs text-gray-400">Transfiere a nuestros datos oficiales y reporta tu pago para acreditación inmediata.</p>
-            
-            <div class="bg-darkBg p-4 rounded-xl border border-darkBorder space-y-2 text-xs">
-                <p class="text-accentGold font-bold">Datos de Pago Móvil:</p>
-                <p class="text-gray-300">Banco: <span id="modal-bank" class="font-bold text-white">Mercantil</span></p>
-                <p class="text-gray-300">Teléfono: <span id="modal-phone" class="font-bold text-white">04121234567</span></p>
-                <p class="text-gray-300">Cédula: <span id="modal-id" class="font-bold text-white">V-12345678</span></p>
-                <p class="text-gray-300">Tasa del Dólar: <span id="modal-rate" class="font-bold text-accentGreen">36.50 Bs/$</span></p>
-            </div>
-
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Monto en Dólares ($) a Recargar</label>
-                    <input type="number" id="deposit-usd" oninput="calculateBolivares()" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="20">
-                    <p class="text-[11px] text-accentGold mt-1 font-semibold" id="deposit-bs-equiv">Equivalente: 0.00 Bs.</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Número de Referencia Bancaria (Últimos 6 dígitos)</label>
-                    <input type="text" id="deposit-ref" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: 456789">
-                </div>
-                <button onclick="submitDeposit()" class="w-full bg-accentGreen hover:bg-emerald-600 text-darkBg font-black text-xs py-3 rounded-xl shadow transition-all">Enviar Reporte de Recarga</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Retiro -->
-    <div id="withdraw-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cardBg border border-darkBorder rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
-            <button onclick="closeWithdrawModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-black text-white flex items-center"><i class="fa-solid fa-money-bill-transfer text-accentGold mr-2"></i> Solicitar Retiro de Premios</h3>
-            <p class="text-xs text-gray-400">Ingresa tus datos bancarios y el monto que deseas retirar a tu cuenta.</p>
-
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Monto a Retirar ($)</label>
-                    <input type="number" id="withdraw-amount" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="10">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Tus Datos de Pago (Banco, Teléfono y Cédula)</label>
-                    <textarea id="withdraw-details" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white h-20" placeholder="Ej: Banco Banesco, 04149876543, V-98765432"></textarea>
-                </div>
-                <button onclick="submitWithdrawal()" class="w-full bg-accentGold hover:bg-amber-600 text-darkBg font-black text-xs py-3 rounded-xl shadow transition-all">Solicitar Retiro</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Crear Partido -->
-    <div id="match-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cardBg border border-darkBorder rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
-            <button onclick="closeCreateMatchModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-lg font-black text-white flex items-center"><i class="fa-solid fa-futbol text-accentGreen mr-2"></i> Crear Partido Personalizado</h3>
-            
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Deporte</label>
-                    <select id="new-sport" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white">
-                        <option value="futbol">Fútbol</option>
-                        <option value="beisbol">Béisbol</option>
-                        <option value="baloncesto">Baloncesto</option>
-                        <option value="tenis">Tenis</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Liga o Torneo</label>
-                    <input type="text" id="new-league" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Ej: Liga FUTVE">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Equipo Local</label>
-                        <input type="text" id="new-home" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Deportivo Lara">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Equipo Visitante</label>
-                        <input type="text" id="new-away" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" placeholder="Caracas FC">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cuota Local (1)</label>
-                        <input type="number" step="0.01" id="new-odd-1" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" value="1.85">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cuota Empate (X)</label>
-                        <input type="number" step="0.01" id="new-odd-x" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" value="3.40">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cuota Visita (2)</label>
-                        <input type="number" step="0.01" id="new-odd-2" class="w-full bg-darkBg border border-darkBorder rounded-xl p-2.5 text-xs text-white" value="4.20">
-                    </div>
-                </div>
-                <button onclick="createNewMatch()" class="w-full bg-accentGreen hover:bg-emerald-600 text-darkBg font-black text-xs py-3 rounded-xl shadow transition-all">Agregar a la Cartelera</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Lógica Principal -->
+    <!-- Script de Tiempo Real, Cash Out Dinámico y Estrellas -->
     <script>
-        // Estado Global de la App
-        let appState = {
-            user: { username: "Juan Carlos", balance: 150.00 },
-            currentSport: 'futbol',
-            currentAdminTab: 'deposits',
-            adminSettings: {
-                bank: "Banco Mercantil (0105)",
-                phone: "04121234567",
-                id: "V-12345678",
-                rate: 36.50,
-                binance: "pagos@novajugada.com",
-                zelle: "pagos@novajugada.com"
+        const matchesData = [
+            {
+                id: 1,
+                league: "Premier League",
+                teamA: "Real Madrid",
+                teamB: "Barcelona",
+                logoA: "https://media.api-sports.io/football/teams/541.png",
+                logoB: "https://media.api-sports.io/football/teams/529.png",
+                formA: ["G", "G", "E", "G", "P"],
+                formB: ["G", "P", "G", "G", "G"],
+                recommendation: "Alta probabilidad de Ambos Anotan debido al poder ofensivo reciente.",
+                odds: { home: 2.10, draw: 3.40, away: 3.20 },
+                goalsA: 1,
+                goalsB: 0,
+                minute: "68'",
+                status: "En curso",
+                dangerousAttack: false, 
+                activeBet: { type: 'Local (1)', amount: 10, cashOutValue: 14.50 }
             },
-            matches: [
-                { id: 1, sport: 'futbol', league: 'UEFA Champions League', home: 'Real Madrid', away: 'Manchester City', time: 'Hoy, 3:00 PM', odds: { home: 2.10, draw: 3.40, away: 3.10 }, live: false },
-                { id: 2, sport: 'futbol', league: 'Premier League', home: 'Arsenal', away: 'Liverpool', time: 'Hoy, 1:30 PM', odds: { home: 2.40, draw: 3.30, away: 2.90 }, live: false },
-                { id: 3, sport: 'futbol', league: 'Liga FUTVE', home: 'Deportivo Táchira', away: 'Caracas FC', time: 'En Vivo (68\')', score: '1 - 1', odds: { home: 1.95, draw: 3.10, away: 3.80 }, live: true },
-                { id: 4, sport: 'beisbol', league: 'LVBP', home: 'Leones del Caracas', away: 'Navegantes del Magallanes', time: 'Hoy, 7:00 PM', odds: { home: 1.80, draw: 15.0, away: 2.05 }, live: false },
-                { id: 5, sport: 'baloncesto', league: 'NBA', home: 'Los Angeles Lakers', away: 'Golden State Warriors', time: 'Mañana, 10:00 PM', odds: { home: 1.90, draw: 13.0, away: 1.90 }, live: false },
-                { id: 6, sport: 'tenis', league: 'ATP Masters', home: 'Carlos Alcaraz', away: 'Jannik Sinner', time: 'Mañana, 2:00 PM', odds: { home: 1.72, draw: 0, away: 2.10 }, live: false }
-            ],
-            parlaySlip: [],
-            userBets: [],
-            deposits: [
-                { id: 101, username: "Juan Carlos", amountUSD: 20, amountBs: 730, ref: "892341", status: "pendiente" }
-            ],
-            withdrawals: []
-        };
-
-        // Cargar datos guardados si existen
-        function loadStorage() {
-            const saved = localStorage.getItem('novajugada_db');
-            if (saved) {
-                try { appState = JSON.parse(saved); } catch(e) {}
+            {
+                id: 2,
+                league: "Liga FUTVE / Internacional",
+                teamA: "Vinotinto (Selección)",
+                teamB: "Brasil (Selección)",
+                logoA: "https://media.api-sports.io/football/teams/2382.png",
+                logoB: "https://media.api-sports.io/football/teams/6.png",
+                formA: ["E", "G", "P", "G", "E"],
+                formB: ["G", "G", "G", "E", "P"],
+                recommendation: "Se recomienda cuota conservadora a doble oportunidad visitante.",
+                odds: { home: 3.80, draw: 3.50, away: 1.95 },
+                goalsA: 0,
+                goalsB: 2,
+                minute: "82'",
+                status: "En curso",
+                dangerousAttack: true, // Jugada peligrosa activa (bloquea Cash Out)
+                activeBet: { type: 'Visita (2)', amount: 20, cashOutValue: 35.00 }
             }
-            updateUI();
-        }
+        ];
 
-        function saveStorage() {
-            localStorage.setItem('novajugada_db', JSON.stringify(appState));
-        }
-
-        // Inicialización
-        window.onload = function() {
-            loadStorage();
-            populateLeagueFilter();
-            renderMatches();
-            renderAdminData();
-        };
-
-        // Navegación de Pestañas
-        function switchTab(tab) {
-            document.getElementById('view-cartelera').classList.add('hidden');
-            document.getElementById('view-admin').classList.add('hidden');
-            
-            if (tab === 'cartelera') {
-                document.getElementById('view-cartelera').classList.remove('hidden');
-            } else if (tab === 'admin') {
-                document.getElementById('view-admin').classList.remove('hidden');
-                renderAdminData();
-            }
-        }
-
-        function setSport(sport) {
-            appState.currentSport = sport;
-            
-            // Actualizar botones de escritorio
-            document.querySelectorAll('.sport-nav-btn').forEach(btn => {
-                btn.className = "sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            });
-            const activeBtn = document.getElementById(`nav-${sport}`);
-            if (activeBtn) activeBtn.className = "sport-nav-btn px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-accentGreen text-darkBg shadow";
-
-            // Actualizar botones móviles
-            document.querySelectorAll('.sport-mob-btn').forEach(btn => {
-                btn.className = "sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-gray-400 bg-darkBg border border-darkBorder";
-            });
-            const activeMobBtn = document.getElementById(`mob-nav-${sport}`);
-            if (activeMobBtn) activeMobBtn.className = "sport-mob-btn whitespace-nowrap px-3 py-1 rounded-lg text-xs font-bold text-darkBg bg-accentGreen";
-
-            populateLeagueFilter();
-            renderMatches();
-        }
-
-        // Llenar filtro de ligas
-        function populateLeagueFilter() {
-            const leagueSelect = document.getElementById('league-filter');
-            const currentVal = leagueSelect.value;
-            leagueSelect.innerHTML = '<option value="all">Todas las Ligas</option>';
-            
-            const leagues = [...new Set(appState.matches.filter(m => appState.currentSport === 'en vivo' ? m.live : m.sport === appState.currentSport).map(m => m.league))];
-            leagues.forEach(l => {
-                const opt = document.createElement('option');
-                opt.value = l;
-                opt.textContent = l;
-                leagueSelect.appendChild(opt);
-            });
-            leagueSelect.value = currentVal;
-        }
-
-        // Renderizar Partidos
         function renderMatches() {
-            const container = document.getElementById('matches-container');
-            const searchVal = document.getElementById('match-search').value.toLowerCase();
-            const leagueVal = document.getElementById('league-filter').value;
+            const container = document.getElementById('matchContainer');
+            container.innerHTML = '';
 
-            let filtered = appState.matches.filter(m => {
-                if (appState.currentSport === 'en vivo') {
-                    if (!m.live) return false;
-                } else {
-                    if (m.sport !== appState.currentSport) return false;
+            matchesData.forEach(match => {
+                const card = document.createElement('div');
+                card.className = 'bg-cardBg border border-darkBorder rounded-xl p-4 shadow-md space-y-4';
+                
+                // Determinación de estrellas si el partido finaliza (Verde para aciertos, Roja para fallos)
+                let star1 = '', starX = '', star2 = '';
+                if (match.status.includes('Finalizado')) {
+                    if (match.goalsA > match.goalsB) { star1 = ' ⭐🟢'; starX = ' ⭐🔴'; star2 = ' ⭐🔴'; }
+                    else if (match.goalsA < match.goalsB) { star1 = ' ⭐🔴'; starX = ' ⭐🔴'; star2 = ' ⭐🟢'; }
+                    else { star1 = ' ⭐🔴'; starX = ' ⭐🟢'; star2 = ' ⭐🔴'; }
                 }
-                if (leagueVal !== 'all' && m.league !== leagueVal) return false;
-                if (searchVal && !m.home.toLowerCase().includes(searchVal) && !m.away.toLowerCase().includes(searchVal) && !m.league.toLowerCase().includes(searchVal)) return false;
-                return true;
-            });
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="bg-cardBg p-8 rounded-2xl border border-darkBorder text-center text-gray-400 text-xs">No hay eventos disponibles en esta sección actualmente.</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(m => `
-                <div class="bg-cardBg border border-darkBorder rounded-2xl p-4 hover:border-gray-700 transition-all shadow-md">
-                    <div class="flex justify-between items-center text-[11px] text-gray-400 mb-2 border-b border-darkBorder/60 pb-2">
-                        <span class="font-bold text-accentGold uppercase tracking-wider">${m.league}</span>
-                        <span class="${m.live ? 'text-red-400 font-black animate-pulse' : ''}"><i class="fa-regular fa-clock mr-1"></i> ${m.time} ${m.score ? ' | ' + m.score : ''}</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                        <div class="md:col-span-5 space-y-1">
-                            <p class="text-xs font-bold text-white flex justify-between"><span>${m.home}</span></p>
-                            <p class="text-xs font-bold text-white flex justify-between"><span>${m.away}</span></p>
-                        </div>
-                        <div class="md:col-span-7 grid grid-cols-3 gap-2">
-                            <button onclick="addToSlip(${m.id}, '1', '${m.home} vs ${m.away} (1)', ${m.odds.home})" class="bg-darkBg hover:bg-emerald-950/40 border border-darkBorder hover:border-accentGreen p-2 rounded-xl text-center transition-all group">
-                                <span class="block text-[10px] text-gray-400 group-hover:text-accentGreen">1</span>
-                                <span class="text-xs font-black text-white">${m.odds.home.toFixed(2)}</span>
+                // Generación de sección de Cash Out en vivo (Rojo con letras amarillas y control de peligro)
+                let cashOutHtml = '';
+                if (match.status === 'En curso' && match.activeBet) {
+                    if (match.dangerousAttack) {
+                        cashOutHtml = `<div class="bg-red-950/40 border border-red-500/40 p-2.5 rounded-lg text-center text-xs text-red-400 font-bold animate-pulse">
+                            ⚠️ ¡Jugada peligrosa en curso! Cash Out temporalmente bloqueado.
+                        </div>`;
+                    } else {
+                        cashOutHtml = `<div class="flex justify-between items-center bg-darkBg border border-darkBorder p-2.5 rounded-lg">
+                            <span class="text-xs text-gray-400">Apuesta activa (${match.activeBet.type}):</span>
+                            <button onclick="executeCashOut(${match.id})" class="bg-red-600 hover:bg-red-700 text-accentGold border border-accentGold/40 px-3 py-1.5 rounded-lg font-extrabold text-xs shadow-lg transition flex items-center gap-1.5">
+                                <i class="fas fa-hand-holding-usd"></i> Cerrar por: $${match.activeBet.cashOutValue.toFixed(2)}
                             </button>
-                            ${m.odds.draw > 0 ? `
-                            <button onclick="addToSlip(${m.id}, 'X', '${m.home} vs ${m.away} (Empate)', ${m.odds.draw})" class="bg-darkBg hover:bg-emerald-950/40 border border-darkBorder hover:border-accentGreen p-2 rounded-xl text-center transition-all group">
-                                <span class="block text-[10px] text-gray-400 group-hover:text-accentGreen">X</span>
-                                <span class="text-xs font-black text-white">${m.odds.draw.toFixed(2)}</span>
-                            </button>` : `<div></div>`}
-                            <button onclick="addToSlip(${m.id}, '2', '${m.home} vs ${m.away} (2)', ${m.odds.away})" class="bg-darkBg hover:bg-emerald-950/40 border border-darkBorder hover:border-accentGreen p-2 rounded-xl text-center transition-all group">
-                                <span class="block text-[10px] text-gray-400 group-hover:text-accentGreen">2</span>
-                                <span class="text-xs font-black text-white">${m.odds.away.toFixed(2)}</span>
-                            </button>
+                        </div>`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs text-gray-400 border-b border-darkBorder pb-2">
+                        <span><i class="fas fa-trophy text-accentGold"></i> ${match.league}</span>
+                        <span class="bg-emerald-500/10 text-accentGreen px-2 py-0.5 rounded font-bold animate-pulse"><i class="fas fa-circle text-[8px]"></i> EN VIVO (${match.minute})</span>
+                    </div>
+
+                    <!-- Equipos, Escudos y Marcador -->
+                    <div class="grid grid-cols-3 items-center text-center gap-2">
+                        <div class="flex flex-col items-center gap-1">
+                            <img src="${match.logoA}" alt="${match.teamA}" class="w-12 h-12 object-contain" onerror="this.src='https://via.placeholder.com/48?text=Escudo'">
+                            <span class="text-sm font-bold text-white">${match.teamA}</span>
+                            <div class="text-[10px] text-gray-400">Últimos 5: [${match.formA.join(', ')}]</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-xs text-gray-500 font-bold uppercase">Marcador</span>
+                            <div class="text-sm bg-darkBg border border-darkBorder px-3 py-1 rounded mt-1 text-accentGold font-extrabold">
+                                ${match.goalsA} - ${match.goalsB}
+                            </div>
+                            <span class="text-[10px] text-gray-400 mt-1">${match.status}</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <img src="${match.logoB}" alt="${match.teamB}" class="w-12 h-12 object-contain" onerror="this.src='https://via.placeholder.com/48?text=Escudo'">
+                            <span class="text-sm font-bold text-white">${match.teamB}</span>
+                            <div class="text-[10px] text-gray-400">Últimos 5: [${match.formB.join(', ')}]</div>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        }
 
-        function filterMatches() {
-            renderMatches();
-        }
-
-        // Lógica del Boleto Parlay
-        function addToSlip(matchId, pick, label, odds) {
-            appState.parlaySlip = appState.parlaySlip.filter(item => item.matchId !== matchId);
-            appState.parlaySlip.push({ matchId, pick, label, odds });
-            updateSlipUI();
-        }
-
-        function removeFromSlip(matchId) {
-            appState.parlaySlip = appState.parlaySlip.filter(item => item.matchId !== matchId);
-            updateSlipUI();
-        }
-
-        function updateSlipUI() {
-            const countBadge = document.getElementById('slip-count-badge');
-            const itemsContainer = document.getElementById('slip-items');
-            const summaryArea = document.getElementById('slip-summary');
-
-            countBadge.textContent = appState.parlaySlip.length;
-
-            if (appState.parlaySlip.length === 0) {
-                itemsContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><i class="fa-solid fa-ticket text-3xl mb-2 opacity-30"></i><p class="text-xs">Haz clic en cualquier cuota de los partidos para armar tu jugada.</p></div>`;
-                summaryArea.classList.add('hidden');
-                return;
-            }
-
-            summaryArea.classList.remove('hidden');
-            itemsContainer.innerHTML = appState.parlaySlip.map(item => `
-                <div class="bg-darkBg p-2.5 rounded-xl border border-darkBorder flex justify-between items-center text-xs">
-                    <div>
-                        <p class="font-bold text-white">${item.label}</p>
-                        <p class="text-[10px] text-accentGold font-bold">Cuota: ${item.odds.toFixed(2)}</p>
+                    <!-- Recomendación Inteligente de IA -->
+                    <div class="bg-darkBg/60 border border-darkBorder p-2.5 rounded-lg text-xs text-gray-300 flex items-start gap-2">
+                        <i class="fas fa-brain text-accentGold mt-0.5"></i>
+                        <div><strong class="text-white">Análisis IA:</strong> ${match.recommendation}</div>
                     </div>
-                    <button onclick="removeFromSlip(${item.matchId})" class="text-red-400 hover:text-red-300 px-2"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-            `).join('');
 
-            calculatePayout();
-        }
+                    <!-- Cash Out Dinámico (Rojo y letras amarillas) -->
+                    ${cashOutHtml}
 
-        function calculatePayout() {
-            if (appState.parlaySlip.length === 0) return;
-            let totalOdds = appState.parlaySlip.reduce((acc, item) => acc * item.odds, 1);
-            document.getElementById('slip-total-odds').textContent = totalOdds.toFixed(2);
-
-            const stake = parseFloat(document.getElementById('stake-input').value) || 0;
-            const potential = stake * totalOdds;
-            document.getElementById('potential-payout').textContent = `$${potential.toFixed(2)}`;
-        }
-
-        function setStake(amount) {
-            document.getElementById('stake-input').value = amount;
-            calculatePayout();
-        }
-
-        function placeBet() {
-            const stake = parseFloat(document.getElementById('stake-input').value) || 0;
-            if (stake <= 0) {
-                alert("Ingresa un monto válido para apostar.");
-                return;
-            }
-            if (stake > appState.user.balance) {
-                alert("Saldo insuficiente. Realiza una recarga para continuar.");
-                return;
-            }
-
-            let totalOdds = appState.parlaySlip.reduce((acc, item) => acc * item.odds, 1);
-            let potential = stake * totalOdds;
-
-            appState.user.balance -= stake;
-            
-            const newBet = {
-                id: Date.now(),
-                selections: [...appState.parlaySlip],
-                stake: stake,
-                totalOdds: totalOdds,
-                potential: potential,
-                status: 'Activo'
-            };
-
-            appState.userBets.unshift(newBet);
-            appState.parlaySlip = [];
-            
-            saveStorage();
-            updateUI();
-            updateSlipUI();
-            alert("¡Apuesta registrada con éxito! ¡Mucha suerte!");
-        }
-
-        function updateUI() {
-            document.getElementById('user-balance-display').textContent = `$${appState.user.balance.toFixed(2)}`;
-            document.getElementById('max-stake-label').textContent = `Saldo: $${appState.user.balance.toFixed(2)}`;
-            
-            const betsContainer = document.getElementById('user-bets-list');
-            if (appState.userBets.length === 0) {
-                betsContainer.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">No tienes jugadas activas recientes.</p>`;
-                return;
-            }
-
-            betsContainer.innerHTML = appState.userBets.map(b => `
-                <div class="bg-darkBg p-3 rounded-xl border border-darkBorder space-y-1 text-xs">
-                    <div class="flex justify-between font-bold text-gray-300">
-                        <span>Apostado: $${b.stake.toFixed(2)}</span>
-                        <span class="text-accentGold">Cuota: ${b.totalOdds.toFixed(2)}</span>
+                    <!-- Cuadritos de Cuotas con Estrellas -->
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <button onclick="placeBet(${match.id}, '1', ${match.odds.home})" class="bg-darkBg hover:bg-emerald-950/40 border border-darkBorder hover:border-accentGreen p-2 rounded-lg text-center transition">
+                            <div class="text-[10px] text-gray-400">1 (Local)${star1}</div>
+                            <div class="text-xs font-extrabold text-accentGreen">${match.odds.home}</div>
+                        </button>
+                        <button onclick="placeBet(${match.id}, 'X', ${match.odds.draw})" class="bg-darkBg hover:bg-amber-950/40 border border-darkBorder hover:border-accentGold p-2 rounded-lg text-center transition">
+                            <div class="text-[10px] text-gray-400">X (Empate)${starX}</div>
+                            <div class="text-xs font-extrabold text-accentGold">${match.odds.draw}</div>
+                        </button>
+                        <button onclick="placeBet(${match.id}, '2', ${match.odds.away})" class="bg-darkBg hover:bg-emerald-950/40 border border-darkBorder hover:border-accentGreen p-2 rounded-lg text-center transition">
+                            <div class="text-[10px] text-gray-400">2 (Visita)${star2}</div>
+                            <div class="text-xs font-extrabold text-accentGreen">${match.odds.away}</div>
+                        </button>
                     </div>
-                    <p class="text-[11px] text-gray-400">Premio: <strong class="text-accentGreen">$${b.potential.toFixed(2)}</strong></p>
-                    <div class="flex justify-between items-center pt-1 text-[10px]">
-                        <span class="text-gray-500">${b.selections.length} logro(s) combinados</span>
-                        <span class="bg-blue-900/40 text-blue-400 font-bold px-2 py-0.5 rounded-full">${b.status}</span>
+
+                    <!-- Panel de Control y Simulación en Vivo -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center pt-2 border-t border-darkBorder text-xs gap-2">
+                        <span class="text-gray-400">Simulador en Vivo:</span>
+                        <div class="flex gap-1.5 flex-wrap">
+                            <button onclick="toggleDanger(${match.id})" class="bg-amber-600/20 text-amber-400 border border-amber-500/30 px-2 py-1 rounded">Peligro (Bloqueo)</button>
+                            <button onclick="simulateGoals(${match.id}, 1, 0)" class="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2 py-1 rounded">Gol Local</button>
+                            <button onclick="finalizeMatch(${match.id})" class="bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-2 py-1 rounded">Finalizar</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
-        }
-
-        // Sistema de Recargas y Retiros Modales
-        function openDepositModal() {
-            document.getElementById('modal-bank').textContent = appState.adminSettings.bank;
-            document.getElementById('modal-phone').textContent = appState.adminSettings.phone;
-            document.getElementById('modal-id').textContent = appState.adminSettings.id;
-            document.getElementById('modal-rate').textContent = `${appState.adminSettings.rate} Bs/$`;
-            document.getElementById('deposit-modal').classList.remove('hidden');
-        }
-
-        function closeDepositModal() {
-            document.getElementById('deposit-modal').classList.add('hidden');
-        }
-
-        function calculateBolivares() {
-            const usd = parseFloat(document.getElementById('deposit-usd').value) || 0;
-            const bs = usd * appState.adminSettings.rate;
-            document.getElementById('deposit-bs-equiv').textContent = `Equivalente: ${bs.toFixed(2)} Bs.`;
-        }
-
-        function submitDeposit() {
-            const usd = parseFloat(document.getElementById('deposit-usd').value) || 0;
-            const ref = document.getElementById('deposit-ref').value;
-            if (usd <= 0 || !ref) {
-                alert("Completa todos los campos correctamente.");
-                return;
-            }
-
-            const bs = usd * appState.adminSettings.rate;
-            appState.deposits.push({
-                id: Date.now(),
-                username: appState.user.username,
-                amountUSD: usd,
-                amountBs: bs,
-                ref: ref,
-                status: 'pendiente'
+                `;
+                container.appendChild(card);
             });
-
-            saveStorage();
-            closeDepositModal();
-            alert("¡Recarga reportada! El administrador la verificará en breve.");
         }
 
-        function openWithdrawModal() {
-            document.getElementById('withdraw-modal').classList.remove('hidden');
+        function placeBet(matchId, type, odd) {
+            alert(`¡Apuesta en vivo registrada! Selección: ${type} a cuota ${odd}.`);
         }
 
-        function closeWithdrawModal() {
-            document.getElementById('withdraw-modal').classList.add('hidden');
-        }
-
-        function submitWithdrawal() {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value) || 0;
-            const details = document.getElementById('withdraw-details').value;
-            if (amount <= 0 || !details) {
-                alert("Completa todos los datos para el retiro.");
-                return;
-            }
-            if (amount > appState.user.balance) {
-                alert("El monto supera tu saldo disponible.");
-                return;
-            }
-
-            appState.user.balance -= amount;
-            appState.withdrawals.push({
-                id: Date.now(),
-                username: appState.user.username,
-                amountUSD: amount,
-                details: details,
-                status: 'pendiente'
-            });
-
-            saveStorage();
-            updateUI();
-            closeWithdrawModal();
-            alert("¡Solicitud de retiro enviada con éxito!");
-        }
-
-        // Crear partido personalizado
-        function openCreateMatchModal() {
-            document.getElementById('match-modal').classList.remove('hidden');
-        }
-
-        function closeCreateMatchModal() {
-            document.getElementById('match-modal').classList.add('hidden');
-        }
-
-        function createNewMatch() {
-            const sport = document.getElementById('new-sport').value;
-            const league = document.getElementById('new-league').value;
-            const home = document.getElementById('new-home').value;
-            const away = document.getElementById('new-away').value;
-            const o1 = parseFloat(document.getElementById('new-odd-1').value) || 1.80;
-            const ox = parseFloat(document.getElementById('new-odd-x').value) || 3.20;
-            const o2 = parseFloat(document.getElementById('new-odd-2').value) || 2.10;
-
-            if (!league || !home || !away) {
-                alert("Completa los nombres de los equipos y la liga.");
-                return;
-            }
-
-            const newM = {
-                id: Date.now(),
-                sport, league, home, away,
-                time: 'Próximamente',
-                odds: { home: o1, draw: ox, away: o2 },
-                live: false
-            };
-
-            appState.matches.unshift(newM);
-            saveStorage();
-            populateLeagueFilter();
-            renderMatches();
-            closeCreateMatchModal();
-            alert("¡Partido agregado a la cartelera!");
-        }
-
-        // Panel de Administrador
-        function switchAdminTab(subtab) {
-            document.getElementById('admin-content-deposits').classList.add('hidden');
-            document.getElementById('admin-content-withdrawals').classList.add('hidden');
-            document.getElementById('admin-content-settings').classList.add('hidden');
-            
-            document.querySelectorAll('.admin-sub-btn').forEach(b => {
-                b.className = "admin-sub-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 bg-cardBg border border-darkBorder";
-            });
-
-            document.getElementById(`admin-content-${subtab}`).classList.remove('hidden');
-            document.getElementById(`adm-tab-${subtab}`).className = "admin-sub-btn px-4 py-2 rounded-xl text-xs font-bold bg-accentGreen text-darkBg";
-        }
-
-        function renderAdminData() {
-            const totalStaked = appState.userBets.reduce((acc, b) => acc + b.stake, 0);
-            document.getElementById('admin-total-staked').textContent = `$${totalStaked.toFixed(2)}`;
-            
-            const pendingDep = appState.deposits.filter(d => d.status === 'pendiente').length;
-            const pendingWith = appState.withdrawals.filter(w => w.status === 'pendiente').length;
-            document.getElementById('admin-pending-deposits').textContent = pendingDep;
-            document.getElementById('admin-pending-withdrawals').textContent = pendingWith;
-
-            document.getElementById('cfg-bank').value = appState.adminSettings.bank;
-            document.getElementById('cfg-phone').value = appState.adminSettings.phone;
-            document.getElementById('cfg-id').value = appState.adminSettings.id;
-            document.getElementById('cfg-rate').value = appState.adminSettings.rate;
-            document.getElementById('cfg-binance').value = appState.adminSettings.binance;
-            document.getElementById('cfg-zelle').value = appState.adminSettings.zelle;
-
-            const depList = document.getElementById('admin-deposits-list');
-            const pendingDeposits = appState.deposits.filter(d => d.status === 'pendiente');
-            if (pendingDeposits.length === 0) {
-                depList.innerHTML = `<p class="text-xs text-gray-500">No hay solicitudes de recarga pendientes.</p>`;
-            } else {
-                depList.innerHTML = pendingDeposits.map(d => `
-                    <div class="bg-darkBg p-3 rounded-xl border border-darkBorder flex justify-between items-center text-xs">
-                        <div>
-                            <p class="font-bold text-white">${d.username} - <span class="text-accentGreen">$${d.amountUSD}</span> (${d.amountBs} Bs.)</p>
-                            <p class="text-[10px] text-gray-400">Ref: ${d.ref}</p>
-                        </div>
-                        <div class="space-x-2">
-                            <button onclick="approveDeposit(${d.id})" class="bg-accentGreen text-darkBg px-3 py-1.5 rounded-lg font-bold">Aprobar</button>
-                            <button onclick="rejectDeposit(${d.id})" class="bg-red-500/20 text-red-400 px-3 py-1.5 rounded-lg font-bold">Rechazar</button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            const withList = document.getElementById('admin-withdrawals-list');
-            const pendingWithdrawals = appState.withdrawals.filter(w => w.status === 'pendiente');
-            if (pendingWithdrawals.length === 0) {
-                withList.innerHTML = `<p class="text-xs text-gray-500">No hay solicitudes de retiro pendientes.</p>`;
-            } else {
-                withList.innerHTML = pendingWithdrawals.map(w => `
-                    <div class="bg-darkBg p-3 rounded-xl border border-darkBorder flex justify-between items-center text-xs">
-                        <div>
-                            <p class="font-bold text-white">${w.username} - <span class="text-accentGold">$${w.amountUSD}</span></p>
-                            <p class="text-[10px] text-gray-400">${w.details}</p>
-                        </div>
-                        <div class="space-x-2">
-                            <button onclick="approveWithdrawal(${w.id})" class="bg-accentGreen text-darkBg px-3 py-1.5 rounded-lg font-bold">Marcar Pagado</button>
-                        </div>
-                    </div>
-                `).join('');
+        function executeCashOut(matchId) {
+            const m = matchesData.find(x => x.id === matchId);
+            if(m && m.activeBet && !m.dangerousAttack) {
+                alert(`¡Cash Out ejecutado con éxito! Se acreditaron $${m.activeBet.cashOutValue.toFixed(2)} a tu saldo.`);
+                m.activeBet = null;
+                renderMatches();
             }
         }
 
-        function approveDeposit(id) {
-            const dep = appState.deposits.find(d => d.id === id);
-            if (dep) {
-                dep.status = 'aprobado';
-                appState.user.balance += dep.amountUSD;
-                saveStorage();
-                updateUI();
-                renderAdminData();
-                alert("¡Recarga aprobada y acreditada al usuario!");
+        function toggleDanger(matchId) {
+            const m = matchesData.find(x => x.id === matchId);
+            if(m) {
+                m.dangerousAttack = !m.dangerousAttack;
+                if(m.dangerousAttack && m.activeBet) {
+                    m.activeBet.cashOutValue = Math.max(1.00, m.activeBet.cashOutValue * 0.4); // Desvalorización por riesgo
+                }
+                renderMatches();
             }
         }
 
-        function rejectDeposit(id) {
-            const dep = appState.deposits.find(d => d.id === id);
-            if (dep) {
-                dep.status = 'rechazado';
-                saveStorage();
-                renderAdminData();
-                alert("Recarga rechazada.");
+        function simulateGoals(matchId, addA, addB) {
+            const m = matchesData.find(x => x.id === matchId);
+            if(m && m.status === "En curso") {
+                m.goalsA += addA;
+                m.goalsB += addB;
+
+                if(m.activeBet) {
+                    m.activeBet.cashOutValue *= (addA > 0 ? 1.3 : 0.5); 
+                }
+
+                // Pago Anticipado automático a los 2 goles de diferencia
+                if(Math.abs(m.goalsA - m.goalsB) >= 2) {
+                    alert(`🚨 ¡PAGO ANTICIPADO ACTIVADO! El equipo con ventaja de 2+ goles gana automáticamente.`);
+                    m.status = "Finalizado (Pago Anticipado)";
+                    m.activeBet = null;
+                }
+                renderMatches();
             }
         }
 
-        function approveWithdrawal(id) {
-            const w = appState.withdrawals.find(item => item.id === id);
-            if (w) {
-                w.status = 'pagado';
-                saveStorage();
-                renderAdminData();
-                alert("Retiro procesado con éxito.");
+        function finalizeMatch(matchId) {
+            const m = matchesData.find(x => x.id === matchId);
+            if(m) {
+                m.status = "Finalizado";
+                m.activeBet = null;
+                renderMatches();
             }
         }
 
-        function saveAdminSettings() {
-            appState.adminSettings.bank = document.getElementById('cfg-bank`').value || document.getElementById('cfg-bank').value;
-            appState.adminSettings.phone = document.getElementById('cfg-phone').value;
-            appState.adminSettings.id = document.getElementById('cfg-id').value;
-            appState.adminSettings.rate = parseFloat(document.getElementById('cfg-rate').value) || 36.50;
-            appState.adminSettings.binance = document.getElementById('cfg-binance').value;
-            appState.adminSettings.zelle = document.getElementById('cfg-zelle').value;
-            
-            saveStorage();
-            alert("¡Configuración guardada exitosamente!");
+        // Llave secreta del Admin (?admin=juan2026)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'juan2026' || localStorage.getItem('nova_owner') === 'true') {
+            localStorage.setItem('nova_owner', 'true');
+            const btnAdmin = document.getElementById('btnAdmin');
+            if (btnAdmin) btnAdmin.classList.remove('hidden');
         }
 
-        function logoutUser() {
-            alert("Sesión cerrada.");
+        function toggleAdminPanel() {
+            alert('Abriendo Panel de Control de Administrador...');
         }
+
+        window.onload = renderMatches;
     </script>
 </body>
 </html>
