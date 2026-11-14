@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriunfoBet - Apuestas Deportivas en Vivo</title>
+    <title>NovaJugada - Apuestas Deportivas en Vivo y Próximos Partidos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -11,279 +11,114 @@
             theme: {
                 extend: {
                     colors: {
-                        tbDark: '#0b0b0b',
-                        tbCard: '#141414',
-                        tbYellow: '#ffcc00',
-                        tbYellowHover: '#e6b800',
-                        tbGray: '#222222',
-                        tbBorder: '#333333'
+                        novaDark: '#07090e',
+                        novaCard: '#111827',
+                        novaYellow: '#facc15',
+                        novaYellowHover: '#eab308',
+                        novaGray: '#1f2937',
+                        novaBorder: '#374151'
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-tbDark text-gray-100 font-sans min-h-screen pb-20">
+<body class="bg-novaDark text-gray-100 font-sans min-h-screen pb-24">
 
-    <!-- Header Principal Estilo TriunfoBet -->
-    <header class="bg-tbCard border-b border-tbBorder sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="text-tbYellow text-xl focus:outline-none">
-                    <i class="fas fa-bars"></i>
+    <!-- ================= VISTA DE AUTENTICACIÓN (LOGIN / REGISTRO) ================= -->
+    <div id="authView" class="hidden fixed inset-0 z-50 bg-novaDark flex flex-col justify-center items-center px-4">
+        <div class="bg-novaCard border border-novaBorder p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="flex justify-center items-center gap-2 text-2xl font-black text-white">
+                    <i class="fas fa-bolt text-novaYellow"></i> NOVA<span class="text-novaYellow">JUGADA</span>
+                </div>
+                <p class="text-xs text-gray-400">Regístrate o inicia sesión para apostar en vivo y en los próximos encuentros.</p>
+            </div>
+
+            <div class="flex border-b border-novaBorder text-sm font-bold">
+                <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 pb-2 text-center text-novaYellow border-b-2 border-novaYellow">Acceder</button>
+                <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 pb-2 text-center text-gray-400">Registrarse</button>
+            </div>
+
+            <!-- Login -->
+            <div id="formLogin" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400">Correo o Usuario</label>
+                    <input type="text" id="loginUser" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="ej. juanduran">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Contraseña</label>
+                    <input type="password" id="loginPass" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="••••••••">
+                </div>
+                <button onclick="handleLogin()" class="w-full bg-novaYellow hover:bg-novaYellowHover text-black font-extrabold py-2.5 rounded-lg text-sm transition shadow-lg">
+                    Iniciar Sesión
                 </button>
-                <div class="flex items-center gap-1 font-black text-xl italic tracking-wider text-white">
-                    TRIUNFO<span class="text-tbYellow">BET</span> <i class="fas fa-trophy text-tbYellow text-base not-italic"></i>
-                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <!-- Botón Admin Oculto protegido con llave secreta -->
-                <button id="btnAdmin" onclick="toggleAdminPanel()" class="hidden bg-tbYellow/20 text-tbYellow border border-tbYellow/40 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                    <i class="fas fa-crown"></i> Admin
+
+            <!-- Registro -->
+            <div id="formRegister" class="hidden space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400">Nombre de Usuario</label>
+                    <input type="text" id="regUser" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="Crea tu usuario">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Correo Electrónico</label>
+                    <input type="email" id="regEmail" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="correo@domain.com">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400">Contraseña</label>
+                    <input type="password" id="regPass" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="Mínimo 6 caracteres">
+                </div>
+                <button onclick="handleRegister()" class="w-full bg-novaYellow hover:bg-novaYellowHover text-black font-extrabold py-2.5 rounded-lg text-sm transition shadow-lg">
+                    Crear Cuenta y Obtener Bono ($50)
                 </button>
-                <div class="bg-tbGray border border-tbBorder px-3 py-1 rounded-full text-xs font-bold text-tbYellow flex items-center gap-1">
-                    <span>Bs 1.48</span> <i class="fas fa-sync-alt text-[10px]"></i>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-tbYellow text-black flex items-center justify-center font-bold text-sm">
-                    <i class="fas fa-user"></i>
-                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Submenú de Categorías -->
-        <div class="bg-black/80 border-t border-tbBorder px-4 py-2 flex gap-6 overflow-x-auto text-xs font-bold whitespace-nowrap text-gray-300">
-            <span class="text-tbYellow border-b-2 border-tbYellow pb-1 cursor-pointer">Fútbol</span>
-            <span class="hover:text-tbYellow cursor-pointer">Baloncesto</span>
-            <span class="hover:text-tbYellow cursor-pointer">Tenis</span>
-            <span class="hover:text-tbYellow cursor-pointer">Hipismo</span>
-            <span class="hover:text-tbYellow cursor-pointer">Casino en Vivo</span>
-        </div>
-    </header>
-
-    <!-- Contenido Principal / Partidos en Vivo -->
-    <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
-        <div class="flex justify-between items-center bg-tbCard border border-tbBorder p-3 rounded-xl">
-            <div class="flex items-center gap-2 text-xs font-bold text-red-500 animate-pulse">
-                <i class="fas fa-circle text-[8px]"></i> EN VIVO AHORA
+    <!-- ================= APLICACIÓN PRINCIPAL ================= -->
+    <div id="appView" class="hidden">
+        <!-- Header -->
+        <header class="bg-novaCard border-b border-novaBorder sticky top-0 z-40 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-2 font-black text-xl tracking-wider text-white">
+                    <i class="fas fa-bolt text-novaYellow"></i> NOVA<span class="text-novaYellow">JUGADA</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btnAdmin" onclick="toggleAdminPanel()" class="hidden bg-novaYellow/20 text-novaYellow border border-novaYellow/40 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
+                        <i class="fas fa-crown"></i> Admin
+                    </button>
+                    <div class="bg-novaGray border border-novaBorder px-3 py-1 rounded-full text-xs font-bold text-novaYellow flex items-center gap-2">
+                        <span>$ <span id="userBalance">50.00</span></span>
+                        <button onclick="openWalletModal()" class="text-white hover:text-novaYellow"><i class="fas fa-wallet"></i></button>
+                    </div>
+                    <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs px-2"><i class="fas fa-sign-out-alt text-base"></i></button>
+                </div>
             </div>
-            <span class="text-xs text-gray-400 bg-tbGray px-2 py-1 rounded">1x2</span>
-        </div>
 
-        <!-- Contenedor de Partidos -->
-        <div id="matchContainer" class="space-y-3">
-            <!-- Cargado dinámicamente con JS -->
-        </div>
-    </main>
+            <!-- Filtros: En Vivo / Próximos Partidos -->
+            <div class="bg-black/60 border-t border-novaBorder px-4 py-2 flex gap-4 overflow-x-auto text-xs font-bold text-gray-300">
+                <button onclick="filterTab('all')" id="btnAll" class="text-novaYellow border-b-2 border-novaYellow pb-1">Todos</button>
+                <button onclick="filterTab('live')" id="btnLive" class="hover:text-novaYellow pb-1 text-gray-400">En Vivo Ahora</button>
+                <button onclick="filterTab('upcoming')" id="btnUpcoming" class="hover:text-novaYellow pb-1 text-gray-400">Próximos Partidos</button>
+            </div>
+        </header>
 
-    <!-- Barra de Navegación Inferior Estilo App -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-tbCard border-t border-tbBorder flex justify-around items-center py-2.5 z-40 text-xs">
-        <button class="flex flex-col items-center text-tbYellow">
-            <i class="fas fa-futbol text-lg"></i>
-            <span>Deportes</span>
-        </button>
-        <button class="flex flex-col items-center text-gray-400 hover:text-tbYellow">
-            <i class="fas fa-horse text-lg"></i>
-            <span>Caballos</span>
-        </button>
-        <button class="flex flex-col items-center text-gray-400 hover:text-tbYellow">
-            <i class="fas fa-dice text-lg"></i>
-            <span>Casino</span>
-        </button>
-        <button onclick="toggleCupón()" class="flex flex-col items-center text-gray-400 hover:text-tbYellow relative">
-            <i class="fas fa-ticket-alt text-lg text-tbYellow"></i>
-            <span>Cupón <span id="cupónCount" class="bg-tbYellow text-black font-black text-[9px] px-1 rounded-full">3</span></span>
-        </button>
-        <button class="flex flex-col items-center text-gray-400 hover:text-tbYellow">
-            <i class="fas fa-wallet text-lg"></i>
-            <span>Cajero</span>
-        </button>
-    </nav>
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
+            <div class="flex justify-between items-center bg-novaCard border border-novaBorder p-3 rounded-xl">
+                <div class="flex items-center gap-2 text-xs font-bold text-red-500 animate-pulse">
+                    <i class="fas fa-circle text-[8px]"></i> CARTELERA ACTIVA 100% REAL
+                </div>
+                <span class="text-xs text-gray-400 bg-novaGray px-2 py-1 rounded font-semibold">Fútbol Internacional</span>
+            </div>
 
-    <!-- Script de Funcionalidad Total con Estilo TriunfoBet -->
-    <script>
-        const matchesData = [
-            {
-                id: 1,
-                league: "Partidos Amistosos Internacionales • Mundo",
-                teamA: "Argentina",
-                teamB: "Uruguay",
-                logoA: "https://media.api-sports.io/football/teams/26.png",
-                logoB: "https://media.api-sports.io/football/teams/27.png",
-                minute: "48:26",
-                odds: { home: 385, draw: 214, away: -125 }, // Formato americano/decimal según estilo
-                goalsA: 0,
-                goalsB: 1,
-                status: "En curso",
-                dangerousAttack: false,
-                activeBet: { type: 'Argentina', amount: 10, cashOutValue: 12.50 }
-            },
-            {
-                id: 2,
-                league: "Partidos Amistosos Internacionales • Mundo",
-                teamA: "Colombia",
-                teamB: "Chile",
-                logoA: "https://media.api-sports.io/football/teams/2383.png",
-                logoB: "https://media.api-sports.io/football/teams/2384.png",
-                minute: "07:27",
-                odds: { home: -260, draw: 333, away: 600 },
-                goalsA: 0,
-                goalsB: 0,
-                status: "En curso",
-                dangerousAttack: true, // ¡Jugada peligrosa que bloquea el Cash Out!
-                activeBet: { type: 'Colombia', amount: 15, cashOutValue: 14.00 }
-            }
-        ];
+            <!-- Contenedor de Partidos -->
+            <div id="matchContainer" class="space-y-3">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </main>
 
-        function renderMatches() {
-            const container = document.getElementById('matchContainer');
-            container.innerHTML = '';
-
-            matchesData.forEach(match => {
-                const card = document.createElement('div');
-                card.className = 'bg-tbCard border border-tbBorder rounded-xl p-3 shadow space-y-3';
-                
-                // Estrellas de resultados si finaliza
-                let star1 = '', star2 = '';
-                if (match.status.includes('Finalizado')) {
-                    star1 = match.goalsA > match.goalsB ? ' ⭐🟢' : ' ⭐🔴';
-                    star2 = match.goalsB > match.goalsA ? ' ⭐🟢' : ' ⭐🔴';
-                }
-
-                // Cash Out Dinámico: Rojo con letras amarillas o aviso de peligro
-                let cashOutHtml = '';
-                if (match.status === 'En curso' && match.activeBet) {
-                    if (match.dangerousAttack) {
-                        cashOutHtml = `<div class="bg-red-950/60 border border-red-600/50 p-2 rounded text-center text-xs text-red-400 font-bold animate-pulse">
-                            ⚠️ ¡Jugada peligrosa! Cash Out bloqueado temporalmente.
-                        </div>`;
-                    } else {
-                        cashOutHtml = `<div class="flex justify-between items-center bg-tbGray border border-tbBorder p-2 rounded">
-                            <span class="text-xs text-gray-400">Tu apuesta (${match.activeBet.type}):</span>
-                            <button onclick="executeCashOut(${match.id})" class="bg-red-600 hover:bg-red-700 text-tbYellow border border-tbYellow/40 px-3 py-1 rounded-lg font-black text-xs shadow transition flex items-center gap-1">
-                                <i class="fas fa-hand-holding-usd"></i> Cerrar: $${match.activeBet.cashOutValue.toFixed(2)}
-                            </button>
-                        </div>`;
-                    }
-                }
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-center text-[11px] text-gray-400 border-b border-tbBorder pb-1">
-                        <span class="flex items-center gap-1"><span class="bg-tbYellow text-black font-bold px-1 rounded text-[9px]">BB</span> ${match.league}</span>
-                        <span class="bg-red-600 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider text-[10px] animate-pulse">EN VIVO ${match.minute}</span>
-                    </div>
-
-                    <!-- Equipos y Banderas -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <img src="${match.logoA}" alt="${match.teamA}" class="w-6 h-6 object-contain" onerror="this.src='https://via.placeholder.com/24?text=🏳️'">
-                                <span class="text-sm font-bold text-white">${match.teamA}${star1}</span>
-                            </div>
-                            <span class="text-sm font-bold text-tbYellow">${match.goalsA}</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <img src="${match.logoB}" alt="${match.teamB}" class="w-6 h-6 object-contain" onerror="this.src='https://via.placeholder.com/24?text=🏳️'">
-                                <span class="text-sm font-bold text-white">${match.teamB}${star2}</span>
-                            </div>
-                            <span class="text-sm font-bold text-tbYellow">${match.goalsB}</span>
-                        </div>
-                    </div>
-
-                    <!-- Cash Out Dinámico -->
-                    ${cashOutHtml}
-
-                    <!-- Cuadritos de Cuotas Estilo TriunfoBet (Grisáceos con bordes finos) -->
-                    <div class="grid grid-cols-3 gap-2 pt-1">
-                        <button onclick="placeBet(${match.id}, '${match.teamA}', ${match.odds.home})" class="bg-tbGray hover:bg-tbBorder border border-tbBorder p-2 rounded-lg text-center transition">
-                            <div class="text-[10px] text-gray-400 truncate">${match.teamA}</div>
-                            <div class="text-xs font-black text-white">${match.odds.home > 0 ? '+' + match.odds.home : match.odds.home}</div>
-                        </button>
-                        <button onclick="placeBet(${match.id}, 'Empate', ${match.odds.draw})" class="bg-tbGray hover:bg-tbBorder border border-tbBorder p-2 rounded-lg text-center transition">
-                            <div class="text-[10px] text-gray-400">Empate</div>
-                            <div class="text-xs font-black text-white">${match.odds.draw > 0 ? '+' + match.odds.draw : match.odds.draw}</div>
-                        </button>
-                        <button onclick="placeBet(${match.id}, '${match.teamB}', ${match.odds.away})" class="bg-tbGray hover:bg-tbBorder border border-tbBorder p-2 rounded-lg text-center transition">
-                            <div class="text-[10px] text-gray-400 truncate">${match.teamB}</div>
-                            <div class="text-xs font-black text-white">${match.odds.away > 0 ? '+' + match.odds.away : match.odds.away}</div>
-                        </button>
-                    </div>
-
-                    <!-- Panel de Simulación (Administrador / Pruebas) -->
-                    <div class="flex justify-between items-center pt-2 border-t border-tbBorder text-[11px]">
-                        <span class="text-gray-500">Simulador:</span>
-                        <div class="flex gap-1">
-                            <button onclick="toggleDanger(${match.id})" class="bg-yellow-600/20 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/30">Peligro</button>
-                            <button onclick="simulateGoals(${match.id}, 1, 0)" class="bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">Gol Local</button>
-                            <button onclick="finalizeMatch(${match.id})" class="bg-emerald-600/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">Finalizar</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function placeBet(matchId, selection, odd) {
-            alert(`¡Apuesta agregada al cupón! Selección: ${selection} (${odd})`);
-        }
-
-        function executeCashOut(matchId) {
-            const m = matchesData.find(x => x.id === matchId);
-            if(m && m.activeBet && !m.dangerousAttack) {
-                alert(`¡Cash Out exitoso! Se acreditaron $${m.activeBet.cashOutValue.toFixed(2)} a tu saldo.`);
-                m.activeBet = null;
-                renderMatches();
-            }
-        }
-
-        function toggleDanger(matchId) {
-            const m = matchesData.find(x => x.id === matchId);
-            if(m) {
-                m.dangerousAttack = !m.dangerousAttack;
-                if(m.dangerousAttack && m.activeBet) m.activeBet.cashOutValue *= 0.4;
-                renderMatches();
-            }
-        }
-
-        function simulateGoals(matchId, addA, addB) {
-            const m = matchesData.find(x => x.id === matchId);
-            if(m && m.status === "En curso") {
-                m.goalsA += addA;
-                m.goalsB += addB;
-                if(m.activeBet) m.activeBet.cashOutValue *= (addA > 0 ? 1.3 : 0.5);
-
-                if(Math.abs(m.goalsA - m.goalsB) >= 2) {
-                    alert(`🚨 ¡PAGO ANTICIPADO ACTIVADO! Ventaja de 2+ goles liquidada como ganada.`);
-                    m.status = "Finalizado (Pago Anticipado)";
-                    m.activeBet = null;
-                }
-                renderMatches();
-            }
-        }
-
-        function finalizeMatch(matchId) {
-            const m = matchesData.find(x => x.id === matchId);
-            if(m) {
-                m.status = "Finalizado";
-                m.activeBet = null;
-                renderMatches();
-            }
-        }
-
-        function toggleSidebar() { alert('Abriendo menú lateral de categorías...'); }
-        function toggleCupón() { alert('Desplegando cupón de apuestas inferior...'); }
-
-        // Llave secreta del Admin (?admin=juan2026)[span_6](start_span)[span_6](end_span)
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('admin') === 'juan2026' || localStorage.getItem('nova_owner') === 'true') {
-            localStorage.setItem('nova_owner', 'true');
-            const btnAdmin = document.getElementById('btnAdmin');
-            if(btnAdmin) btnAdmin.classList.remove('hidden');
-        }
-
-        function toggleAdminPanel() { alert('Abriendo Panel de Administración y Cajero...'); }
-
-        window.onload = renderMatches;
-    </script>
-</body>
-</html>
+        <!-- Navegación Inferior -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-novaCard border-t border-novaBorder flex justify
+            
