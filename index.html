@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaJugada - Apuestas Deportivas en Vivo y Próximos Partidos</title>
+    <title>NovaJugada - Apuestas Deportivas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -11,114 +11,284 @@
             theme: {
                 extend: {
                     colors: {
-                        novaDark: '#07090e',
-                        novaCard: '#111827',
-                        novaYellow: '#facc15',
-                        novaYellowHover: '#eab308',
-                        novaGray: '#1f2937',
-                        novaBorder: '#374151'
+                        nvDark: '#0b0f19',
+                        nvCard: '#131b2e',
+                        nvYellow: '#facc15',
+                        nvGray: '#1e293b'
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-novaDark text-gray-100 font-sans min-h-screen pb-24">
+<body class="bg-nvDark text-gray-100 font-sans min-h-screen pb-20">
 
-    <!-- ================= VISTA DE AUTENTICACIÓN (LOGIN / REGISTRO) ================= -->
-    <div id="authView" class="hidden fixed inset-0 z-50 bg-novaDark flex flex-col justify-center items-center px-4">
-        <div class="bg-novaCard border border-novaBorder p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-6">
-            <div class="text-center space-y-2">
-                <div class="flex justify-center items-center gap-2 text-2xl font-black text-white">
-                    <i class="fas fa-bolt text-novaYellow"></i> NOVA<span class="text-novaYellow">JUGADA</span>
-                </div>
-                <p class="text-xs text-gray-400">Regístrate o inicia sesión para apostar en vivo y en los próximos encuentros.</p>
+    <!-- Header Principal -->
+    <header class="bg-nvCard border-b border-nvGray sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2 font-black text-xl tracking-wider text-white">
+                <i class="fas fa-bolt text-nvYellow"></i> NOVA<span class="text-nvYellow">JUGADA</span>
             </div>
-
-            <div class="flex border-b border-novaBorder text-sm font-bold">
-                <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 pb-2 text-center text-novaYellow border-b-2 border-novaYellow">Acceder</button>
-                <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 pb-2 text-center text-gray-400">Registrarse</button>
-            </div>
-
-            <!-- Login -->
-            <div id="formLogin" class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400">Correo o Usuario</label>
-                    <input type="text" id="loginUser" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="ej. juanduran">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400">Contraseña</label>
-                    <input type="password" id="loginPass" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="••••••••">
-                </div>
-                <button onclick="handleLogin()" class="w-full bg-novaYellow hover:bg-novaYellowHover text-black font-extrabold py-2.5 rounded-lg text-sm transition shadow-lg">
-                    Iniciar Sesión
+            <div class="flex items-center gap-2">
+                <!-- Botón de Administrador Oculto (Usa ?admin=juan2026 en el navegador para verlo) -->
+                <button id="btnAdmin" onclick="alert('Panel de Administrador Activo')" class="hidden bg-nvYellow/20 text-nvYellow border border-nvYellow/40 px-2 py-1 rounded text-xs font-bold">
+                    <i class="fas fa-crown"></i> Admin
                 </button>
-            </div>
-
-            <!-- Registro -->
-            <div id="formRegister" class="hidden space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400">Nombre de Usuario</label>
-                    <input type="text" id="regUser" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="Crea tu usuario">
+                <div class="bg-nvGray border border-nvGray px-3 py-1 rounded-full text-xs font-bold text-nvYellow flex items-center gap-1">
+                    <span>$ <span id="userBalance">50.00</span></span>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400">Correo Electrónico</label>
-                    <input type="email" id="regEmail" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="correo@domain.com">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400">Contraseña</label>
-                    <input type="password" id="regPass" class="w-full bg-novaGray border border-novaBorder rounded-lg px-3 py-2 text-sm text-white focus:border-novaYellow outline-none" placeholder="Mínimo 6 caracteres">
-                </div>
-                <button onclick="handleRegister()" class="w-full bg-novaYellow hover:bg-novaYellowHover text-black font-extrabold py-2.5 rounded-lg text-sm transition shadow-lg">
-                    Crear Cuenta y Obtener Bono ($50)
+                <button onclick="changeUser()" class="bg-nvYellow text-black px-2.5 py-1 rounded text-xs font-bold">
+                    Cuenta
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- ================= APLICACIÓN PRINCIPAL ================= -->
-    <div id="appView" class="hidden">
-        <!-- Header -->
-        <header class="bg-novaCard border-b border-novaBorder sticky top-0 z-40 shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-2 font-black text-xl tracking-wider text-white">
-                    <i class="fas fa-bolt text-novaYellow"></i> NOVA<span class="text-novaYellow">JUGADA</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button id="btnAdmin" onclick="toggleAdminPanel()" class="hidden bg-novaYellow/20 text-novaYellow border border-novaYellow/40 px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">
-                        <i class="fas fa-crown"></i> Admin
-                    </button>
-                    <div class="bg-novaGray border border-novaBorder px-3 py-1 rounded-full text-xs font-bold text-novaYellow flex items-center gap-2">
-                        <span>$ <span id="userBalance">50.00</span></span>
-                        <button onclick="openWalletModal()" class="text-white hover:text-novaYellow"><i class="fas fa-wallet"></i></button>
+        <!-- Pestañas de Navegación -->
+        <div class="bg-black/40 border-t border-nvGray px-4 py-2 flex gap-4 text-xs font-bold text-gray-300">
+            <button onclick="setTab('all')" id="tabAll" class="text-nvYellow border-b-2 border-nvYellow pb-1">Todos</button>
+            <button onclick="setTab('live')" id="tabLive" class="hover:text-nvYellow pb-1 text-gray-400">En Vivo</button>
+            <button onclick="setTab('upcoming')" id="tabUpcoming" class="hover:text-nvYellow pb-1 text-gray-400">Próximos</button>
+        </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
+        <div class="bg-gradient-to-r from-blue-900/40 to-emerald-900/40 border border-nvGray p-3 rounded-xl flex justify-between items-center">
+            <div>
+                <h1 class="text-sm font-extrabold text-white">Cartelera Deportiva Activa</h1>
+                <p class="text-[11px] text-gray-400">Pago anticipado (2 goles) y Cash Out dinámico.</p>
+            </div>
+            <span class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">100% EN VIVO</span>
+        </div>
+
+        <!-- Partidos -->
+        <div id="matchContainer" class="space-y-3"></div>
+    </main>
+
+    <!-- Barra Inferior -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-nvCard border-t border-nvGray flex justify-around items-center py-2.5 z-40 text-xs">
+        <button class="flex flex-col items-center text-nvYellow">
+            <i class="fas fa-futbol text-base"></i>
+            <span>Deportes</span>
+        </button>
+        <button onclick="simDeposit()" class="flex flex-col items-center text-gray-400 hover:text-nvYellow">
+            <i class="fas fa-wallet text-base"></i>
+            <span>Cajero ($)</span>
+        </button>
+        <button onclick="alert('Todas tus apuestas y saldo están sincronizados en tiempo real.')" class="flex flex-col items-center text-gray-400 hover:text-nvYellow">
+            <i class="fas fa-history text-base"></i>
+            <span>Historial</span>
+        </button>
+    </nav>
+
+    <!-- Script Funcional Sin Pantalla Negra -->
+    <script>
+        let balance = parseFloat(localStorage.getItem('nv_balance')) || 50.00;
+        let activeTab = 'all';
+
+        const matches = [
+            {
+                id: 1,
+                league: "Partidos Amistosos • En Vivo",
+                teamA: "Argentina",
+                teamB: "Uruguay",
+                logoA: "https://media.api-sports.io/football/teams/26.png",
+                logoB: "https://media.api-sports.io/football/teams/27.png",
+                time: "48:26",
+                isLive: true,
+                odds: { home: 2.10, draw: 3.14, away: 1.85 },
+                goalsA: 0,
+                goalsB: 1,
+                status: "En curso",
+                danger: false,
+                bet: null
+            },
+            {
+                id: 2,
+                league: "Partidos Amistosos • En Vivo",
+                teamA: "Colombia",
+                teamB: "Chile",
+                logoA: "https://media.api-sports.io/football/teams/2383.png",
+                logoB: "https://media.api-sports.io/football/teams/2384.png",
+                time: "07:27",
+                isLive: true,
+                odds: { home: 1.75, draw: 3.33, away: 4.50 },
+                goalsA: 0,
+                goalsB: 0,
+                status: "En curso",
+                danger: true,
+                bet: null
+            },
+            {
+                id: 3,
+                league: "Eliminatorias • Próximo",
+                teamA: "Brasil",
+                teamB: "Ecuador",
+                logoA: "https://media.api-sports.io/football/teams/6.png",
+                logoB: "https://media.api-sports.io/football/teams/2382.png",
+                time: "Mañana 19:00",
+                isLive: false,
+                odds: { home: 1.50, draw: 4.00, away: 6.50 },
+                goalsA: 0,
+                goalsB: 0,
+                status: "Próximo",
+                danger: false,
+                bet: null
+            }
+        ];
+
+        function updateUI() {
+            document.getElementById('userBalance').innerText = balance.toFixed(2);
+            localStorage.setItem('nv_balance', balance);
+        }
+
+        function setTab(tab) {
+            activeTab = tab;
+            document.getElementById('tabAll').className = tab === 'all' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
+            document.getElementById('tabLive').className = tab === 'live' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
+            document.getElementById('tabUpcoming').className = tab === 'upcoming' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('matchContainer');
+            container.innerHTML = '';
+
+            let list = matches;
+            if (activeTab === 'live') list = matches.filter(m => m.isLive);
+            if (activeTab === 'upcoming') list = matches.filter(m => !m.isLive);
+
+            list.forEach(m => {
+                let cashOutBox = '';
+                if (m.isLive && m.bet) {
+                    if (m.danger) {
+                        cashOutBox = `<div class="bg-red-950/80 border border-red-600 p-2 rounded text-center text-xs text-red-400 font-bold animate-pulse">⚠️ ¡Jugada peligrosa! Cash Out bloqueado.</div>`;
+                    } else {
+                        cashOutBox = `<div class="flex justify-between items-center bg-nvGray p-2 rounded text-xs">
+                            <span class="text-gray-400">Apuesta (${m.bet.type}):</span>
+                            <button onclick="doCashOut(${m.id})" class="bg-red-600 text-nvYellow font-extrabold px-3 py-1 rounded shadow">Cerrar por: $${m.bet.val.toFixed(2)}</button>
+                        </div>`;
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-nvCard border border-nvGray rounded-xl p-3 space-y-3 shadow";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-[11px] text-gray-400 border-b border-nvGray pb-1">
+                        <span>${m.league}</span>
+                        <span class="bg-red-600 text-white px-1.5 py-0.5 rounded font-bold">${m.time}</span>
                     </div>
-                    <button onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-xs px-2"><i class="fas fa-sign-out-alt text-base"></i></button>
-                </div>
-            </div>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <img src="${m.logoA}" class="w-5 h-5 object-contain" onerror="this.src='https://via.placeholder.com/20?text=🏳️'">
+                                <span class="text-sm font-bold text-white">${m.teamA}</span>
+                            </div>
+                            <span class="text-sm font-bold text-nvYellow">${m.isLive ? m.goalsA : '-'}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <img src="${m.logoB}" class="w-5 h-5 object-contain" onerror="this.src='https://via.placeholder.com/20?text=🏳️'">
+                                <span class="text-sm font-bold text-white">${m.teamB}</span>
+                            </div>
+                            <span class="text-sm font-bold text-nvYellow">${m.isLive ? m.goalsB : '-'}</span>
+                        </div>
+                    </div>
+                    ${cashOutBox}
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="placeBet(${m.id}, '${m.teamA}', ${m.odds.home})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
+                            <div class="text-[10px] text-gray-400 truncate">${m.teamA}</div>
+                            <div class="text-xs font-black text-nvYellow">${m.odds.home}</div>
+                        </button>
+                        <button onclick="placeBet(${m.id}, 'Empate', ${m.odds.draw})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
+                            <div class="text-[10px] text-gray-400">Empate</div>
+                            <div class="text-xs font-black text-nvYellow">${m.odds.draw}</div>
+                        </button>
+                        <button onclick="placeBet(${m.id}, '${m.teamB}', ${m.odds.away})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
+                            <div class="text-[10px] text-gray-400 truncate">${m.teamB}</div>
+                            <div class="text-xs font-black text-nvYellow">${m.odds.away}</div>
+                        </button>
+                    </div>
+                    ${m.isLive ? `
+                    <div class="flex justify-between items-center pt-2 border-t border-nvGray text-[11px]">
+                        <span class="text-gray-500">Admin Test:</span>
+                        <div class="flex gap-1">
+                            <button onclick="toggleDanger(${m.id})" class="bg-amber-600/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">Peligro</button>
+                            <button onclick="addGoal(${m.id})" class="bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">Gol Local</button>
+                        </div>
+                    </div>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
 
-            <!-- Filtros: En Vivo / Próximos Partidos -->
-            <div class="bg-black/60 border-t border-novaBorder px-4 py-2 flex gap-4 overflow-x-auto text-xs font-bold text-gray-300">
-                <button onclick="filterTab('all')" id="btnAll" class="text-novaYellow border-b-2 border-novaYellow pb-1">Todos</button>
-                <button onclick="filterTab('live')" id="btnLive" class="hover:text-novaYellow pb-1 text-gray-400">En Vivo Ahora</button>
-                <button onclick="filterTab('upcoming')" id="btnUpcoming" class="hover:text-novaYellow pb-1 text-gray-400">Próximos Partidos</button>
-            </div>
-        </header>
+        function placeBet(id, team, odd) {
+            let m = matches.find(x => x.id === id);
+            if(m.bet) { alert('Ya tienes una apuesta activa en este juego.'); return; }
+            let amt = prompt(`Apostar por ${team} (Cuota ${odd}). Ingrese monto (Saldo: $${balance.toFixed(2)}):`, "10");
+            if(!amt || isNaN(amt) || Number(amt) <= 0) return;
+            let val = Number(amt);
+            if(val > balance) { alert('Saldo insuficiente.'); return; }
+            balance -= val;
+            m.bet = { type: team, amt: val, val: val * 1.3 };
+            updateUI();
+            render();
+            alert('¡Apuesta registrada con éxito!');
+        }
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
-            <div class="flex justify-between items-center bg-novaCard border border-novaBorder p-3 rounded-xl">
-                <div class="flex items-center gap-2 text-xs font-bold text-red-500 animate-pulse">
-                    <i class="fas fa-circle text-[8px]"></i> CARTELERA ACTIVA 100% REAL
-                </div>
-                <span class="text-xs text-gray-400 bg-novaGray px-2 py-1 rounded font-semibold">Fútbol Internacional</span>
-            </div>
+        function doCashOut(id) {
+            let m = matches.find(x => x.id === id);
+            if(m && m.bet && !m.danger) {
+                balance += m.bet.val;
+                updateUI();
+                alert(`¡Cash Out exitoso! Se acreditaron $${m.bet.val.toFixed(2)}.`);
+                m.bet = null;
+                render();
+            }
+        }
 
-            <!-- Contenedor de Partidos -->
-            <div id="matchContainer" class="space-y-3">
-                <!-- Se cargan dinámicamente -->
-            </div>
-        </main>
+        function toggleDanger(id) {
+            let m = matches.find(x => x.id === id);
+            if(m) { m.danger = !m.danger; render(); }
+        }
 
-        <!-- Navegación Inferior -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-novaCard border-t border-novaBorder flex justify
-            
+        function addGoal(id) {
+            let m = matches.find(x => x.id === id);
+            if(m) {
+                m.goalsA++;
+                if(m.bet) m.bet.val *= 1.4;
+                if(Math.abs(m.goalsA - m.goalsB) >= 2 && m.bet) {
+                    balance += m.bet.amt * 2.2;
+                    alert('🚨 ¡Pago Anticipado por 2 goles de diferencia! Apuesta ganada automáticamente.');
+                    m.bet = null;
+                }
+                updateUI();
+                render();
+            }
+        }
+
+        function simDeposit() {
+            balance += 20.00;
+            updateUI();
+            alert('¡Depósito de $20.00 acreditado a tu saldo!');
+        }
+
+        function changeUser() {
+            let u = prompt('Ingrese su usuario:', 'Juan');
+            if(u) alert(`Usuario actual: ${u}`);
+        }
+
+        // Acceso Admin con ?admin=juan2026[span_0](start_span)[span_0](end_span)
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('admin') === 'juan2026' || localStorage.getItem('nv_own') === 'true') {
+            localStorage.setItem('nv_own', 'true');
+            document.getElementById('btnAdmin').classList.remove('hidden');
+        }
+
+        window.onload = () => {
+            updateUI();
+            render();
+        };
+    </script>
+</body>
+</html>
