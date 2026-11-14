@@ -1,294 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaJugada - Apuestas Deportivas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        nvDark: '#0b0f19',
-                        nvCard: '#131b2e',
-                        nvYellow: '#facc15',
-                        nvGray: '#1e293b'
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-nvDark text-gray-100 font-sans min-h-screen pb-20">
-
-    <!-- Header Principal -->
-    <header class="bg-nvCard border-b border-nvGray sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2 font-black text-xl tracking-wider text-white">
-                <i class="fas fa-bolt text-nvYellow"></i> NOVA<span class="text-nvYellow">JUGADA</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <!-- Botón de Administrador Oculto (Usa ?admin=juan2026 en el navegador para verlo) -->
-                <button id="btnAdmin" onclick="alert('Panel de Administrador Activo')" class="hidden bg-nvYellow/20 text-nvYellow border border-nvYellow/40 px-2 py-1 rounded text-xs font-bold">
-                    <i class="fas fa-crown"></i> Admin
-                </button>
-                <div class="bg-nvGray border border-nvGray px-3 py-1 rounded-full text-xs font-bold text-nvYellow flex items-center gap-1">
-                    <span>$ <span id="userBalance">50.00</span></span>
-                </div>
-                <button onclick="changeUser()" class="bg-nvYellow text-black px-2.5 py-1 rounded text-xs font-bold">
-                    Cuenta
-                </button>
-            </div>
-        </div>
-
-        <!-- Pestañas de Navegación -->
-        <div class="bg-black/40 border-t border-nvGray px-4 py-2 flex gap-4 text-xs font-bold text-gray-300">
-            <button onclick="setTab('all')" id="tabAll" class="text-nvYellow border-b-2 border-nvYellow pb-1">Todos</button>
-            <button onclick="setTab('live')" id="tabLive" class="hover:text-nvYellow pb-1 text-gray-400">En Vivo</button>
-            <button onclick="setTab('upcoming')" id="tabUpcoming" class="hover:text-nvYellow pb-1 text-gray-400">Próximos</button>
-        </div>
-    </header>
-
-    <!-- Contenido -->
-    <main class="max-w-7xl mx-auto px-4 py-4 space-y-4">
-        <div class="bg-gradient-to-r from-blue-900/40 to-emerald-900/40 border border-nvGray p-3 rounded-xl flex justify-between items-center">
-            <div>
-                <h1 class="text-sm font-extrabold text-white">Cartelera Deportiva Activa</h1>
-                <p class="text-[11px] text-gray-400">Pago anticipado (2 goles) y Cash Out dinámico.</p>
-            </div>
-            <span class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">100% EN VIVO</span>
-        </div>
-
-        <!-- Partidos -->
-        <div id="matchContainer" class="space-y-3"></div>
-    </main>
-
-    <!-- Barra Inferior -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-nvCard border-t border-nvGray flex justify-around items-center py-2.5 z-40 text-xs">
-        <button class="flex flex-col items-center text-nvYellow">
-            <i class="fas fa-futbol text-base"></i>
-            <span>Deportes</span>
-        </button>
-        <button onclick="simDeposit()" class="flex flex-col items-center text-gray-400 hover:text-nvYellow">
-            <i class="fas fa-wallet text-base"></i>
-            <span>Cajero ($)</span>
-        </button>
-        <button onclick="alert('Todas tus apuestas y saldo están sincronizados en tiempo real.')" class="flex flex-col items-center text-gray-400 hover:text-nvYellow">
-            <i class="fas fa-history text-base"></i>
-            <span>Historial</span>
-        </button>
-    </nav>
-
-    <!-- Script Funcional Sin Pantalla Negra -->
-    <script>
-        let balance = parseFloat(localStorage.getItem('nv_balance')) || 50.00;
-        let activeTab = 'all';
-
-        const matches = [
-            {
-                id: 1,
-                league: "Partidos Amistosos • En Vivo",
-                teamA: "Argentina",
-                teamB: "Uruguay",
-                logoA: "https://media.api-sports.io/football/teams/26.png",
-                logoB: "https://media.api-sports.io/football/teams/27.png",
-                time: "48:26",
-                isLive: true,
-                odds: { home: 2.10, draw: 3.14, away: 1.85 },
-                goalsA: 0,
-                goalsB: 1,
-                status: "En curso",
-                danger: false,
-                bet: null
-            },
-            {
-                id: 2,
-                league: "Partidos Amistosos • En Vivo",
-                teamA: "Colombia",
-                teamB: "Chile",
-                logoA: "https://media.api-sports.io/football/teams/2383.png",
-                logoB: "https://media.api-sports.io/football/teams/2384.png",
-                time: "07:27",
-                isLive: true,
-                odds: { home: 1.75, draw: 3.33, away: 4.50 },
-                goalsA: 0,
-                goalsB: 0,
-                status: "En curso",
-                danger: true,
-                bet: null
-            },
-            {
-                id: 3,
-                league: "Eliminatorias • Próximo",
-                teamA: "Brasil",
-                teamB: "Ecuador",
-                logoA: "https://media.api-sports.io/football/teams/6.png",
-                logoB: "https://media.api-sports.io/football/teams/2382.png",
-                time: "Mañana 19:00",
-                isLive: false,
-                odds: { home: 1.50, draw: 4.00, away: 6.50 },
-                goalsA: 0,
-                goalsB: 0,
-                status: "Próximo",
-                danger: false,
-                bet: null
-            }
-        ];
-
-        function updateUI() {
-            document.getElementById('userBalance').innerText = balance.toFixed(2);
-            localStorage.setItem('nv_balance', balance);
-        }
-
-        function setTab(tab) {
-            activeTab = tab;
-            document.getElementById('tabAll').className = tab === 'all' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
-            document.getElementById('tabLive').className = tab === 'live' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
-            document.getElementById('tabUpcoming').className = tab === 'upcoming' ? "text-nvYellow border-b-2 border-nvYellow pb-1" : "hover:text-nvYellow pb-1 text-gray-400";
-            render();
-        }
-
-        function render() {
-            const container = document.getElementById('matchContainer');
-            container.innerHTML = '';
-
-            let list = matches;
-            if (activeTab === 'live') list = matches.filter(m => m.isLive);
-            if (activeTab === 'upcoming') list = matches.filter(m => !m.isLive);
-
-            list.forEach(m => {
-                let cashOutBox = '';
-                if (m.isLive && m.bet) {
-                    if (m.danger) {
-                        cashOutBox = `<div class="bg-red-950/80 border border-red-600 p-2 rounded text-center text-xs text-red-400 font-bold animate-pulse">⚠️ ¡Jugada peligrosa! Cash Out bloqueado.</div>`;
-                    } else {
-                        cashOutBox = `<div class="flex justify-between items-center bg-nvGray p-2 rounded text-xs">
-                            <span class="text-gray-400">Apuesta (${m.bet.type}):</span>
-                            <button onclick="doCashOut(${m.id})" class="bg-red-600 text-nvYellow font-extrabold px-3 py-1 rounded shadow">Cerrar por: $${m.bet.val.toFixed(2)}</button>
-                        </div>`;
-                    }
-                }
-
-                const card = document.createElement('div');
-                card.className = "bg-nvCard border border-nvGray rounded-xl p-3 space-y-3 shadow";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center text-[11px] text-gray-400 border-b border-nvGray pb-1">
-                        <span>${m.league}</span>
-                        <span class="bg-red-600 text-white px-1.5 py-0.5 rounded font-bold">${m.time}</span>
-                    </div>
-                    <div class="space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <img src="${m.logoA}" class="w-5 h-5 object-contain" onerror="this.src='https://via.placeholder.com/20?text=🏳️'">
-                                <span class="text-sm font-bold text-white">${m.teamA}</span>
-                            </div>
-                            <span class="text-sm font-bold text-nvYellow">${m.isLive ? m.goalsA : '-'}</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center gap-2">
-                                <img src="${m.logoB}" class="w-5 h-5 object-contain" onerror="this.src='https://via.placeholder.com/20?text=🏳️'">
-                                <span class="text-sm font-bold text-white">${m.teamB}</span>
-                            </div>
-                            <span class="text-sm font-bold text-nvYellow">${m.isLive ? m.goalsB : '-'}</span>
-                        </div>
-                    </div>
-                    ${cashOutBox}
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="placeBet(${m.id}, '${m.teamA}', ${m.odds.home})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
-                            <div class="text-[10px] text-gray-400 truncate">${m.teamA}</div>
-                            <div class="text-xs font-black text-nvYellow">${m.odds.home}</div>
-                        </button>
-                        <button onclick="placeBet(${m.id}, 'Empate', ${m.odds.draw})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
-                            <div class="text-[10px] text-gray-400">Empate</div>
-                            <div class="text-xs font-black text-nvYellow">${m.odds.draw}</div>
-                        </button>
-                        <button onclick="placeBet(${m.id}, '${m.teamB}', ${m.odds.away})" class="bg-nvGray border border-nvGray p-2 rounded text-center hover:border-nvYellow transition">
-                            <div class="text-[10px] text-gray-400 truncate">${m.teamB}</div>
-                            <div class="text-xs font-black text-nvYellow">${m.odds.away}</div>
-                        </button>
-                    </div>
-                    ${m.isLive ? `
-                    <div class="flex justify-between items-center pt-2 border-t border-nvGray text-[11px]">
-                        <span class="text-gray-500">Admin Test:</span>
-                        <div class="flex gap-1">
-                            <button onclick="toggleDanger(${m.id})" class="bg-amber-600/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30">Peligro</button>
-                            <button onclick="addGoal(${m.id})" class="bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30">Gol Local</button>
-                        </div>
-                    </div>` : ''}
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function placeBet(id, team, odd) {
-            let m = matches.find(x => x.id === id);
-            if(m.bet) { alert('Ya tienes una apuesta activa en este juego.'); return; }
-            let amt = prompt(`Apostar por ${team} (Cuota ${odd}). Ingrese monto (Saldo: $${balance.toFixed(2)}):`, "10");
-            if(!amt || isNaN(amt) || Number(amt) <= 0) return;
-            let val = Number(amt);
-            if(val > balance) { alert('Saldo insuficiente.'); return; }
-            balance -= val;
-            m.bet = { type: team, amt: val, val: val * 1.3 };
-            updateUI();
-            render();
-            alert('¡Apuesta registrada con éxito!');
-        }
-
-        function doCashOut(id) {
-            let m = matches.find(x => x.id === id);
-            if(m && m.bet && !m.danger) {
-                balance += m.bet.val;
-                updateUI();
-                alert(`¡Cash Out exitoso! Se acreditaron $${m.bet.val.toFixed(2)}.`);
-                m.bet = null;
-                render();
-            }
-        }
-
-        function toggleDanger(id) {
-            let m = matches.find(x => x.id === id);
-            if(m) { m.danger = !m.danger; render(); }
-        }
-
-        function addGoal(id) {
-            let m = matches.find(x => x.id === id);
-            if(m) {
-                m.goalsA++;
-                if(m.bet) m.bet.val *= 1.4;
-                if(Math.abs(m.goalsA - m.goalsB) >= 2 && m.bet) {
-                    balance += m.bet.amt * 2.2;
-                    alert('🚨 ¡Pago Anticipado por 2 goles de diferencia! Apuesta ganada automáticamente.');
-                    m.bet = null;
-                }
-                updateUI();
-                render();
-            }
-        }
-
-        function simDeposit() {
-            balance += 20.00;
-            updateUI();
-            alert('¡Depósito de $20.00 acreditado a tu saldo!');
-        }
-
-        function changeUser() {
-            let u = prompt('Ingrese su usuario:', 'Juan');
-            if(u) alert(`Usuario actual: ${u}`);
-        }
-
-        // Acceso Admin con ?admin=juan2026[span_0](start_span)[span_0](end_span)
-        const params = new URLSearchParams(window.location.search);
-        if(params.get('admin') === 'juan2026' || localStorage.getItem('nv_own') === 'true') {
-            localStorage.setItem('nv_own', 'true');
-            document.getElementById('btnAdmin').classList.remove('hidden');
-        }
-
-        window.onload = () => {
-            updateUI();
-            render();
-        };
-    </script>
-</body>
-</html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18"><title>NovaJugada | Tu pasión, tu juego</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{font-family:Manrope,sans-serif;background:#080d18}.glass{background:rgba(17,26,45,.9);border:1px solid #263247;box-shadow:0 24px 80px #0006}.field{width:100%;background:#0b1323;border:1px solid #334155;border-radius:13px;padding:13px;color:#fff;outline:none}.field:focus{border-color:#facc15;box-shadow:0 0 0 3px #facc1520}.primary{background:#facc15;color:#111827;font-weight:800;border-radius:13px;padding:13px}.hidden{display:none!important}
+</style></head>
+<body class="min-h-screen text-slate-100">
+<div class="min-h-screen relative overflow-hidden">
+<div class="absolute -top-40 -left-32 w-96 h-96 rounded-full bg-yellow-400/10 blur-3xl"></div><div class="absolute top-1/3 -right-40 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"></div>
+<header class="relative max-w-7xl mx-auto px-5 py-5 flex justify-between items-center border-b border-white/5">
+<div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-yellow-400 text-slate-950 grid place-items-center text-xl">⚡</span><b class="tracking-widest">NOVA<span class="text-yellow-400">JUGADA</span></b></div><span class="hidden sm:block text-xs text-slate-400">Plataforma en preparación</span>
+</header>
+<main class="relative max-w-7xl mx-auto px-5 py-12 md:py-16">
+<section id="authView" class="grid lg:grid-cols-2 gap-12 items-center">
+<div class="max-w-xl">
+<div class="inline-block rounded-full border border-yellow-400/20 bg-yellow-400/5 px-3 py-2 text-xs font-bold text-yellow-300 mb-7">UNA NUEVA EXPERIENCIA DEPORTIVA</div>
+<h1 class="text-4xl md:text-6xl font-extrabold leading-tight">La emoción del deporte.<br><span class="text-yellow-400">A tu manera.</span></h1>
+<p class="mt-6 text-slate-400 leading-7">Crea tu cuenta y prepárate para descubrir una experiencia deportiva diseñada con claridad, seguridad y pasión por el juego.</p>
+<div class="mt-9 grid grid-cols-2 gap-3 max-w-md">
+<div class="rounded-2xl border border-white/10 bg-white/[.03] p-4"><div class="text-yellow-400 text-xl">◈</div><b class="text-sm">Tu cuenta privada</b><p class="text-xs text-slate-400 mt-1">Tu información, solo para ti.</p></div>
+<div class="rounded-2xl border border-white/10 bg-white/[.03] p-4"><div class="text-yellow-400 text-xl">✓</div><b class="text-sm">Acceso seguro</b><p class="text-xs text-slate-400 mt-1">Registro e inicio de sesión.</p></div></div>
+<p class="mt-8 text-xs text-slate-500">Versión en configuración. Las apuestas y los movimientos de dinero no están habilitados.</p>
+</div>
+<div class="glass rounded-3xl p-6 sm:p-8 w-full max-w-md mx-auto">
+<div class="flex gap-2 p-1 rounded-xl bg-slate-950 mb-7"><button id="loginTab" class="flex-1 rounded-lg py-3 text-sm font-extrabold bg-yellow-400 text-slate-950">Iniciar sesión</button><button id="signupTab" class="flex-1 rounded-lg py-3 text-sm font-bold text-slate-400">Crear cuenta</button></div>
+<div id="heading"><h2 class="text-2xl font-extrabold">Qué bueno verte</h2><p class="text-sm text-slate-400 mt-2">Ingresa a tu cuenta de NovaJugada.</p></div>
+<form id="authForm" class="mt-7 space-y-4">
+<div id="nameField" class="hidden"><label class="block text-xs font-bold mb-2" for="fullName">Nombre completo</label><input class="field" id="fullName" maxlength="80" placeholder="Tu nombre"></div>
+<div id="usernameField" class="hidden"><label class="block text-xs font-bold mb-2" for="username">Nombre de usuario</label><input class="field" id="username" maxlength="30" placeholder="Cómo te identificaremos"></div>
+<div><label class="block text-xs font-bold mb-2" for="email">Correo electrónico</label><input class="field" id="email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" required></div>
+<div><label class="block text-xs font-bold mb-2" for="password">Contraseña</label><input class="field" id="password" type="password" minlength="8" placeholder="Mínimo 8 caracteres" required></div>
+<button id="submitButton" class="primary w-full" type="submit">Entrar a mi cuenta →</button></form>
+<div id="message" class="hidden mt-5 rounded-xl border p-3 text-sm" role="status" aria-live="polite"></div>
+<p class="text-[11px] text-slate-500 mt-6 leading-5">Al continuar, aceptas cumplir las condiciones de uso y las leyes aplicables. Debes tener la edad legal requerida.</p>
+</div></section>
+<section id="privateView" class="hidden max-w-3xl mx-auto"><div class="glass rounded-3xl p-7 sm:p-10"><div class="flex flex-wrap justify-between gap-4"><div><div class="text-xs uppercase tracking-widest text-yellow-400 font-extrabold">Acceso confirmado</div><h1 class="text-3xl font-extrabold mt-3">¡Bienvenido a NovaJugada!</h1><p id="welcomeEmail" class="text-slate-400 mt-2 text-sm"></p></div><button id="logoutButton" class="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold">Cerrar sesión</button></div><div class="mt-8 rounded-2xl bg-slate-950 border border-white/10 p-5"><b>Tu espacio personal</b><p class="text-sm text-slate-400 mt-2 leading-6">Tu sesión está iniciada. Estamos preparando la conexión segura de tu perfil y billetera individual. No se muestran partidos, cuotas ni saldos hasta completar esa integración.</p></div><p class="mt-5 text-xs text-amber-300">● Apuestas y operaciones monetarias desactivadas durante la configuración.</p></div></section>
+</main>
+<footer class="relative max-w-7xl mx-auto px-5 py-7 border-t border-white/5 text-center text-xs text-slate-500">© <span id="year"></span> NovaJugada. Todos los derechos reservados.</footer>
+</div>
+<script>
+// Sustituye estos valores con Project URL y anon/public key de Supabase > Project Settings > API.
+// NUNCA coloques aquí la clave service_role.
+const SUPABASE_URL="https://lxdrpjhzbbrvwljcqgvu.supabase.co";
+const SUPABASE_ANON_KEY="sb_publisable_QKSMp-MD6NRNNbGQvwKdUQ_EP3o3SXz";
+let client=null,mode="login";
+const $=id=>document.getElementById(id);
+$("year").textContent=new Date().getFullYear();
+function getClient(){if(!window.supabase)throw Error("No se pudo cargar Supabase. Revisa tu conexión.");if(SUPABASE_URL.startsWith("PEGA_AQUI")||SUPABASE_ANON_KEY.startsWith("PEGA_AQUI"))throw Error("Falta configurar la URL y la clave pública de Supabase. No introduzcas tus datos todavía.");if(!client)client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return client}
+function msg(t,error=false){$("message").textContent=t;$("message").className="mt-5 rounded-xl border p-3 text-sm "+(error?"border-red-500/30 bg-red-950/40 text-red-200":"border-emerald-500/30 bg-emerald-950/40 text-emerald-200")}
+function setMode(m){mode=m;let s=m==="signup";$("nameField").classList.toggle("hidden",!s);$("usernameField").classList.toggle("hidden",!s);$("loginTab").className=s?"flex-1 rounded-lg py-3 text-sm font-bold text-slate-400":"flex-1 rounded-lg py-3 text-sm font-extrabold bg-yellow-400 text-slate-950";$("signupTab").className=s?"flex-1 rounded-lg py-3 text-sm font-extrabold bg-yellow-400 text-slate-950":"flex-1 rounded-lg py-3 text-sm font-bold text-slate-400";$("heading").innerHTML=s?'<h2 class="text-2xl font-extrabold">Crea tu cuenta</h2><p class="text-sm text-slate-400 mt-2">Regístrate para tener tu espacio personal.</p>':'<h2 class="text-2xl font-extrabold">Qué bueno verte</h2><p class="text-sm text-slate-400 mt-2">Ingresa a tu cuenta de NovaJugada.</p>';$("submitButton").textContent=s?"Crear mi cuenta →":"Entrar a mi cuenta →";$("message").classList.add("hidden")}
+$("loginTab").onclick=()=>setMode("login");$("signupTab").onclick=()=>setMode("signup");
+function showPrivate(user){$("authView").classList.add("hidden");$("privateView").classList.remove("hidden");$("welcomeEmail").textContent=user.email||"Sesión iniciada"}
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();$("message").classList.add("hidden");$("submitButton").disabled=true;$("submitButton").textContent="Procesando…";try{let c=getClient(),email=$("email").value.trim(),password=$("password").value,r;if(mode==="signup"){let full_name=$("fullName").value.trim(),username=$("username").value.trim();if(!full_name||!username)throw Error("Completa tu nombre y tu nombre de usuario.");r=await c.auth.signUp({email,password,options:{data:{full_name,username}}});if(r.error)throw r.error;if(r.data.session)showPrivate(r.data.user);else{msg("Registro recibido. Revisa tu correo para confirmar la cuenta y luego inicia sesión.");setMode("login")}}else{r=await c.auth.signInWithPassword({email,password});if(r.error)throw r.error;showPrivate(r.data.user)}}catch(err){msg(err.message||"No se pudo completar la operación.",true)}finally{$("submitButton").disabled=false;$("submitButton").textContent=mode==="signup"?"Crear mi cuenta →":"Entrar a mi cuenta →"}});
+$("logoutButton").onclick=async()=>{try{let {error}=await getClient().auth.signOut();if(error)throw error;$("privateView").classList.add("hidden");$("authView").classList.remove("hidden");$("authForm").reset();setMode("login")}catch(e){alert(e.message)}};
+(async()=>{try{let {data}=await getClient().auth.getSession();if(data.session?.user)showPrivate(data.session.user)}catch(e){}})();
+</script></body></html>
